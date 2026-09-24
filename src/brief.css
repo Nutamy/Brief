@@ -58,7 +58,7 @@
   @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
   /* точки-навигация */
-  .dot{display:flex;align-items:center;gap:.45rem;background:none;border:none;cursor:pointer;padding:.35rem .15rem;flex:none}
+  .dot{display:flex;align-items:center;gap:.35rem;background:none;border:none;cursor:pointer;padding:.35rem .1rem;flex:none}
   .dot .dn{width:26px;height:26px;border-radius:9999px;border:2px solid #E6DEC9;background:#fff;font:800 12px 'Manrope',sans-serif;color:#6F6553;display:flex;align-items:center;justify-content:center;transition:.2s}
   .dot .dl{font:700 12px 'Manrope',sans-serif;color:#6F6553;white-space:nowrap}
   .dot.cur .dn{border-color:#C89A3C;background:#C89A3C;color:#fff}
@@ -109,13 +109,29 @@
   .warnbar{align-items:flex-start;gap:.55rem}
   .warnbar.show{display:flex}
 
-  /* final confirmation */
-  .cbx{width:1.15rem;height:1.15rem;accent-color:#C89A3C;flex:none;cursor:pointer}
-  .trustcard[hidden]{display:none}
-  .confirmcard{display:flex;gap:.75rem;align-items:center;border:2px solid #E6DEC9;background:#fff;border-radius:1.25rem;padding:1rem 1.25rem;cursor:pointer;transition:.2s}
-  .confirmcard:hover{border-color:#C89A3C}
-  .confirmcard:has(.cbx:checked){border-color:#3E9B5F;background:rgba(62,155,95,.06)}
-  .confirmcard.err{border-color:#E05252;box-shadow:0 0 0 4px rgba(224,82,82,.12)}
+  /* recorders: big one on step 2, compact ones next to single questions */
+  .recbtn .rstop{display:none}
+  .recbtn.rec .rmic{display:none}
+  .recbtn.rec .rstop{display:block}
+  .recbtn.sm{width:38px;height:38px;box-shadow:0 6px 14px -8px rgba(200,154,60,.6)}
+  .vmini{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .7rem}
+  .voicenote{display:flex;align-items:flex-start;gap:.55rem;background:#fff;border:1.5px solid #E6DEC9;border-radius:1rem;padding:.75rem 1rem;font-size:.88rem;color:#6F6553;line-height:1.5}
+  .voicenote[hidden]{display:none}
+  .voicenote .ic{color:#C89A3C;margin-top:.15rem}
+
+  /* final status: neutral, never looks like an error */
+  .statuscard{border:2px solid rgba(200,154,60,.45);background:linear-gradient(135deg,#FBF3DF,#F7EBD3);border-radius:1.5rem;padding:1.15rem 1.3rem}
+  .statuscard.ok{border-color:rgba(62,155,95,.45);background:rgba(62,155,95,.07)}
+  .statuscard .stt{font-weight:800;font-size:1rem;display:flex;align-items:center;gap:.45rem}
+  .statuscard.ok .stt{color:#2F7D4B}
+  .statuscard .std{font-size:.88rem;color:#6F6553;margin-top:.3rem;line-height:1.5}
+  .stlinks{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+  .stlink{border:1.5px solid #E6DEC9;background:#fff;border-radius:9999px;padding:.35rem .8rem;font:700 12px 'Manrope',sans-serif;color:#A67C28;cursor:pointer;transition:.15s}
+  .stlink:hover{border-color:#C89A3C}
+
+  /* keyboard focus */
+  .chip:focus-visible,.stlink:focus-visible,.dot:focus-visible,.recbtn:focus-visible,.modecard:focus-visible,.btn:focus-visible{outline:3px solid rgba(200,154,60,.55);outline-offset:2px}
+  .trustbtn:has(.tcbx:focus-visible){outline:3px solid rgba(200,154,60,.55);outline-offset:2px}
 
 @tailwind components;
 @tailwind utilities;

@@ -4,27 +4,33 @@ const LABELS = {
   siteurl:'Текущий сайт', siteissues:'Не устраивает в сайте',
   activity:'Чем занимается', city:'Город', format:'Формат работы', services:'Услуги / товары',
   top:'Главные услуги', avgcheck:'Чек',
-  who:'Кто обращается', situation:'С чем приходят', why:'Почему выбирают', thanks:'За что благодарят',
-  doubts:'Что смущает', faq:'Вопросы перед покупкой', rivals:'Сравнивают с',
+  who:'Кто обращается', decider:'Кто принимает решение', situation:'С чем приходят', important:'Важно при выборе',
+  why:'Почему выбирают', whyfact:'Конкретный пример', thanks:'За что благодарят и рекомендуют',
+  doubts:'Что смущает', faq:'Вопросы перед покупкой', refuse:'Почему не покупают', rivals:'Сравнивают с',
   proof:'Доказательства', numbers:'Цифры и условия', has:'Материалы',
-  action:'Главное действие', booking:'Сервис записи', leadto:'Куда слать заявки', lang:'Языки',
-  kztext:'Тексты на казахском', sources:'Откуда клиенты', examples:'Нравятся сайты',
-  notneed:'Не нужно на сайте', extras:'Может понадобиться', terms:'Сроки'
+  action:'Главное действие', leadto:'Куда слать заявки', extras:'Ещё на сайте', booking:'Сервис записи',
+  afterlead:'После заявки', responder:'Кто отвечает', speed:'Скорость ответа', sources:'Откуда клиенты',
+  lang:'Языки', kztext:'Тексты на казахском', entext:'Тексты на английском',
+  brand:'Фирменный стиль', brandparts:'Что есть из стиля', brandkeep:'Что делаем со стилем',
+  examples:'Нравятся сайты', notneed:'Не нужно на сайте', terms:'Сроки'
 };
 const HEAD = ['niche','hassite','siteurl','siteissues','socials'];
 const SECTIONS = [
   { n:2, t:'Бизнес и услуги', keys:['activity','city','format','services','top','avgcheck'] },
-  { n:3, t:'Клиенты',         keys:['who','situation','why','thanks','doubts','faq','rivals'] },
-  { n:4, t:'Доверие',         keys:['proof','numbers','has'] },
-  { n:5, t:'Сайт и заявки',   keys:['action','booking','leadto','lang','kztext','sources','examples','notneed','extras','terms'] }
+  { n:3, t:'Клиенты',         keys:['who','decider','situation','important','why','whyfact','thanks'] },
+  { n:4, t:'Сомнения',        keys:['doubts','faq','refuse','rivals'] },
+  { n:5, t:'Доверие',         keys:['proof','numbers','has'] },
+  { n:6, t:'Заявки',          keys:['action','leadto','extras','booking','afterlead','responder','speed','sources'] },
+  { n:7, t:'Сайт',            keys:['lang','kztext','entext','brand','brandparts','brandkeep','examples','notneed','terms'] }
 ];
-const TRUSTABLE = new Set([3,4,5]);
+const VOICE_TOPICS = { business:'о бизнесе', thanks:'за что благодарят' };
+const TRUSTABLE = new Set([3,4,5,6,7]);
 
 // Abuse limits: the endpoint is public, so every input is bounded
 const MAX_BODY    = 50 * 1024 * 1024;  // whole multipart request
 const MAX_PAYLOAD = 64 * 1024;         // JSON with text answers
 const MAX_FIELD   = 2000;              // mirrors maxlength in the form
-const MAX_FILES   = 3;                 // mirrors MAXV in the recorder
+const MAX_FILES   = 4;                 // mirrors MAXV in the recorder
 const MAX_FILE    = 15 * 1024 * 1024;  // 5 min of opus/aac is far below this
 const TG_LIMIT    = 4000;              // Telegram hard limit is 4096
 
@@ -142,7 +148,6 @@ export async function onRequestPost({ request, env }) {
   L.push('📞 <b>Контакт:</b> ' + esc(d.contact));
   for (const k of HEAD) if (d[k]) L.push('• <b>' + LABELS[k] + ':</b> ' + esc(d[k]));
   L.push('⚙️ <b>Режим:</b> ' + (p.mode === 'fast' ? 'быстрый ⚡️' : 'подробный 📋'));
-  if (p.trustAll === true) L.push('✨ <b>Недостающее доверено мне</b>');
   if (files.length) L.push('🎙 <b>Есть голосовые — слушать в первую очередь</b>');
 
   for (const s of SECTIONS) {
@@ -158,6 +163,9 @@ export async function onRequestPost({ request, env }) {
 
   const empty = SECTIONS.filter(s => !trustedN.has(s.n) && !s.keys.some(k => d[k])).length;
   if (empty || trustedN.size) { L.push(''); L.push('⚠️ <b>Бриф неполный — нужен созвон/уточнения</b>'); }
+  // Optional questions the client left blank: a ready list of what to ask on the call
+  const skipped = Array.isArray(p.skipped) ? p.skipped.map(x => str(x, 300)).filter(Boolean).slice(0, 10) : [];
+  if (skipped.length) { L.push(''); L.push('❔ <b>Без ответа (необязательные):</b>'); for (const x of skipped) L.push('• ' + esc(x)); }
   if (files.length) { L.push(''); L.push('🎙 <b>Голосовых:</b> ' + files.length); }
 
   L.push('');
@@ -168,9 +176,11 @@ export async function onRequestPost({ request, env }) {
   for (const part of parts.slice(1)) await sendText(TOKEN, CHAT, part);
 
   // голосовые: сначала пробуем как voice, при отказе — документом (ничего не теряется)
-  const caption = ('🎙 Голосовое от ' + (d.name || 'клиента')).slice(0, 200);
+  const topics = Array.isArray(p.voiceTopics) ? p.voiceTopics : [];
   for (let i = 0; i < files.length; i++) {
     const f = files[i], name = voiceName(String(f.type), i);
+    const about = VOICE_TOPICS[topics[i]];
+    const caption = ('🎙 Голосовое от ' + (d.name || 'клиента') + (about ? ' — ' + about : '')).slice(0, 200);
     const fd = new FormData();
     fd.append('chat_id', CHAT);
     fd.append('voice', f, name);
