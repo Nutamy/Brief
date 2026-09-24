@@ -26,3 +26,28 @@
 npm install -g wrangler
 wrangler login
 wrangler pages deploy . --project-name=altyn-click
+---
+
+## 🛡 Структура и безопасность
+
+| Файл | Назначение |
+|---|---|
+| `index.html` | Разметка брифа (без инлайн-скриптов — требование CSP) |
+| `assets/brief.js` | Логика формы |
+| `assets/brief.css` | **Собранный** Tailwind + стили (не править вручную) |
+| `src/brief.css`, `tailwind.config.js` | Исходники стилей |
+| `favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | Иконки |
+| `_headers` | Заголовки безопасности Cloudflare Pages (CSP, HSTS и др.) |
+| `functions/api/submit.js` | Приём брифа → Telegram (лимиты, проверка Origin) |
+
+### Пересборка CSS после правки классов в `index.html` / `brief.js`
+
+```bash
+npx tailwindcss@3 -i src/brief.css -o assets/brief.css --minify
+```
+
+Без пересборки новые Tailwind-классы не появятся на сайте.
+
+### Секреты
+
+`TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` — только в **Settings → Variables and Secrets** проекта Pages (тип *Secret*). В репозиторий не коммитить.
