@@ -158,19 +158,31 @@
   }
   $$('.tcbx').forEach(cb=>cb.addEventListener('change',()=>{
     const n=+cb.dataset.trust;
-    if(trustAll&&!cb.checked){ cb.checked=true; return; }
     setTrusted(n,cb.checked); saveDraft(); updateProgress();
   }));
+  // "Trust the rest" only covers what is still unanswered; filled answers are always sent
   $('#trustAll').addEventListener('change',e=>{
-    trustAll=e.target.checked;
-    Object.keys(trusted).forEach(n=>setTrusted(+n,trustAll));
-    saveDraft(); updateProgress(); if(cur===6) renderSummary();
+    trustAll=e.target.checked; hideWarn(); saveDraft(); updateProgress();
   });
+  $('#confirmOk').addEventListener('change',()=>{ $('#confirmCard').classList.remove('err'); hideWarn(); });
+
+  function missingOptional(){ let m=[]; [3,4,5].forEach(n=>{ if(!trusted[n]) m=m.concat(missingIn(n)); }); return m; }
+  function syncFinal(){
+    const m=missingOptional();
+    $('#trustCard').hidden=!m.length;
+    $('#trustMissing').textContent=labelsOf(m).toLowerCase();
+    if(!m.length){ trustAll=false; $('#trustAll').checked=false; }
+  }
+  // A chosen "own option" with an empty text box is an unfinished answer
+  function emptyOthers(n){
+    return STEPS.concat([{n:6,fields:[]}]).find(st=>st.n===n).fields.filter(g=>
+      chipBoxes[g]&&chips[g].includes(OTHER)&&!condOff(g)&&!otherInputs[g].value.trim());
+  }
 
   /* ---------- progress ---------- */
   function stepProgress(n){
     if(n===6) return cur>=6?1:0;
-    if(trusted[n]) return 1;
+    if(trusted[n]||(trustAll&&n>=3&&n<=5)) return 1;
     const r=activeReq(n); if(!r.length) return cur>n?1:0;
     return r.filter(x=>collectVal(x)).length/r.length;
   }
@@ -202,7 +214,7 @@
     $('#btnNextText').textContent=n===6?'Отправить бриф':'Дальше';
     $('#btnNextIc').innerHTML='<use href="#i-'+(n===6?'send':'right')+'"/>';
     hideWarn(); clearErr();
-    if(n===6){ renderSummary(); tsRender(); }
+    if(n===6){ renderSummary(); syncFinal(); tsRender(); }
     updateProgress();
     window.scrollTo({top:0,behavior:'smooth'});
   }
@@ -211,6 +223,11 @@
   $('#btnNext').addEventListener('click',()=>{
     if(cur===6) return submitForm();
     if(trusted[cur]) return go(cur+1);
+    const eo=emptyOthers(cur);
+    if(eo.length){
+      showWarn('Впишите свой вариант или снимите отметку «Свой вариант»: '+labelsOf(eo)+'.');
+      eo.forEach(g=>otherInputs[g].classList.add('err')); otherInputs[eo[0]].focus(); return;
+    }
     const miss=missingIn(cur);
     if(miss.length){
       const tip=REQ[cur]&&[3,4,5].includes(cur)
@@ -335,11 +352,14 @@
       const m=missingIn(n);
       if(m.length){ go(n); showWarn('Не заполнено: '+labelsOf(m)+'. Без этого я не смогу подготовить предложение.'); markErr(m); return; }
     }
-    let missing=[];
-    [3,4,5].forEach(n=>{ if(!trusted[n]) missing=missing.concat(missingIn(n)); });
-    if(missing.length&&!trustAll){
-      showWarn('Не заполнено: '+labelsOf(missing)+'. Отметьте «Доверяю остальное вам» — отправим как есть, или вернитесь и допишите.');
-      return;
+    syncFinal();
+    if(missingOptional().length&&!trustAll){
+      showWarn('Отметьте «Доверяю недостающее вам» — или вернитесь и допишите.');
+      $('#trustCard').scrollIntoView({behavior:'smooth',block:'center'}); return;
+    }
+    if(!$('#confirmOk').checked){
+      showWarn('Отметьте, что ответы проверены.');
+      $('#confirmCard').classList.add('err'); $('#confirmCard').scrollIntoView({behavior:'smooth',block:'center'}); return;
     }
     sending=true;
     const btn=$('#btnNext'), txt=$('#btnNextText');
@@ -376,6 +396,7 @@
   restore();
   Object.keys(chipBoxes).forEach(syncChips);
   Object.keys(trusted).forEach(n=>setTrusted(+n,trusted[n]));
+  $('#confirmOk').checked=false;
   applyConds();
   setMode(mode);
   go(1);

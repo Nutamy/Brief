@@ -142,7 +142,7 @@ export async function onRequestPost({ request, env }) {
   L.push('📞 <b>Контакт:</b> ' + esc(d.contact));
   for (const k of HEAD) if (d[k]) L.push('• <b>' + LABELS[k] + ':</b> ' + esc(d[k]));
   L.push('⚙️ <b>Режим:</b> ' + (p.mode === 'fast' ? 'быстрый ⚡️' : 'подробный 📋'));
-  if (p.trustAll === true) L.push('✨ <b>Доверяет остальное: да</b>');
+  if (p.trustAll === true) L.push('✨ <b>Недостающее доверено мне</b>');
   if (files.length) L.push('🎙 <b>Есть голосовые — слушать в первую очередь</b>');
 
   for (const s of SECTIONS) {

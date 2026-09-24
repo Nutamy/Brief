@@ -15,7 +15,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="/assets/brief.css?v=5400476698">
+<link rel="stylesheet" href="/assets/brief.css?v=208412f1db">
 </head>
 
 <body class="antialiased">
@@ -420,16 +420,22 @@
     <section class="step" data-step="6" id="step6">
       <div class="eyebrow">Шаг 6 · Проверка</div>
       <h2 class="h-step">Проверяем и отправляем <svg class="ic-lg"><use href="#i-send"/></svg></h2>
-      <p class="text-mut mt-2.5 leading-relaxed">Посмотрите, всё ли верно. Пустое можно доверить мне — или вернуться и дописать.</p>
+      <p class="text-mut mt-2.5 leading-relaxed">Посмотрите, всё ли верно. Что-то поправить — жмите «изменить».</p>
 
       <div id="summary" class="mt-7"></div>
 
-      <label class="trustcard mt-6">
+      <!-- Shown only while blocks 3–5 have unanswered required questions -->
+      <label id="trustCard" class="trustcard mt-6" hidden>
         <input type="checkbox" id="trustAll" class="cbx mt-1">
         <div>
-          <div class="font-extrabold flex items-center gap-2"><svg class="ic text-gold"><use href="#i-spark"/></svg>Доверяю остальное вам</div>
-          <p class="text-sm text-mut mt-1 leading-relaxed">Незаполненное в блоках «Клиенты», «Доверие» и «Сайт» я продумаю сама и приду с готовым планом. Имя, контакт и описание бизнеса всё равно нужны.</p>
+          <div class="font-extrabold flex items-center gap-2"><svg class="ic text-gold"><use href="#i-spark"/></svg>Доверяю недостающее вам</div>
+          <p class="text-sm text-mut mt-1 leading-relaxed">Не отвечено: <b id="trustMissing" class="text-ink"></b>. Это я продумаю сама и приду с готовым планом — или вернитесь и допишите.</p>
         </div>
+      </label>
+
+      <label id="confirmCard" class="confirmcard mt-4">
+        <input type="checkbox" id="confirmOk" class="cbx">
+        <span class="font-extrabold">Ответы проверены — всё верно</span>
       </label>
 
       <div id="tsBox" class="mt-5"></div>
@@ -464,7 +470,7 @@
   <p class="text-center text-xs text-mutd">Ваши ответы видите только я · altyn·click · <a href="https://t.me/altynclick" target="_blank" rel="noopener" class="text-golddeep font-bold">@altynclick</a></p>
 </footer>
 
-<script src="/assets/brief.js?v=979289e7d1" defer></script>
+<script src="/assets/brief.js?v=5833030779" defer></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </body>
 </html>
