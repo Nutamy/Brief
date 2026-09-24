@@ -1,4 +1,4 @@
-// Build: npx tailwindcss@3 -i src/brief.css -o assets/brief.css --minify
+// Build: node build.mjs
 module.exports = {
   content: ['./index.html', './assets/brief.js'],
   theme:  { extend: {

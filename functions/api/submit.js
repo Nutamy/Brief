@@ -1,18 +1,24 @@
 // functions/api/submit.js — пересылка брифа в Telegram
 const LABELS = {
-  name:'Имя', contact:'Контакт', bizname:'Бизнес', socials:'Instagram / 2ГИС',
-  activity:'Чем занимается', city:'Город', clients:'Клиенты', avgcheck:'Средний чек',
-  diff:'Особенности', services:'Услуги / товары', top:'Продвигаем в первую очередь',
-  faq:'Частые вопросы', sources:'Откуда клиенты', goals:'Цель сайта',
-  examples:'Нравятся примеры', notneed:'Не нужно на сайте', has:'Есть из материалов',
-  domain:'Домен', opts:'Доп. опции', terms:'Сроки'
+  name:'Имя', contact:'Контакт', niche:'Сфера', hassite:'Сайт сейчас', socials:'Instagram / 2ГИС',
+  siteurl:'Текущий сайт', siteissues:'Не устраивает в сайте',
+  activity:'Чем занимается', city:'Город', format:'Формат работы', services:'Услуги / товары',
+  top:'Главные услуги', avgcheck:'Чек',
+  who:'Кто обращается', situation:'С чем приходят', why:'Почему выбирают', thanks:'За что благодарят',
+  doubts:'Что смущает', faq:'Вопросы перед покупкой', rivals:'Сравнивают с',
+  proof:'Доказательства', numbers:'Цифры и условия', has:'Материалы',
+  action:'Главное действие', booking:'Сервис записи', leadto:'Куда слать заявки', lang:'Языки',
+  kztext:'Тексты на казахском', sources:'Откуда клиенты', examples:'Нравятся сайты',
+  notneed:'Не нужно на сайте', extras:'Может понадобиться', terms:'Сроки'
 };
+const HEAD = ['niche','hassite','siteurl','siteissues','socials'];
 const SECTIONS = [
-  { n:2, t:'О бизнесе',           keys:['activity','city','clients','avgcheck','diff'] },
-  { n:3, t:'Услуги и продажи',    keys:['services','top','faq','sources'] },
-  { n:4, t:'Пожелания к сайту',   keys:['goals','examples','notneed','has','domain'] },
-  { n:5, t:'Опции',               keys:['opts','terms'] }
+  { n:2, t:'Бизнес и услуги', keys:['activity','city','format','services','top','avgcheck'] },
+  { n:3, t:'Клиенты',         keys:['who','situation','why','thanks','doubts','faq','rivals'] },
+  { n:4, t:'Доверие',         keys:['proof','numbers','has'] },
+  { n:5, t:'Сайт и заявки',   keys:['action','booking','leadto','lang','kztext','sources','examples','notneed','extras','terms'] }
 ];
+const TRUSTABLE = new Set([3,4,5]);
 
 // Abuse limits: the endpoint is public, so every input is bounded
 const MAX_BODY    = 50 * 1024 * 1024;  // whole multipart request
@@ -23,7 +29,9 @@ const MAX_FILE    = 15 * 1024 * 1024;  // 5 min of opus/aac is far below this
 const TG_LIMIT    = 4000;              // Telegram hard limit is 4096
 
 const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const str = (v, max = MAX_FIELD) => typeof v === 'string' ? v.trim().slice(0, max) : '';
+// Drop control chars and invisible bidi/zero-width marks (text spoofing), keep \n and \t
+const CLEAN = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g;
+const str = (v, max = MAX_FIELD) => typeof v === 'string' ? v.replace(CLEAN, '').trim().slice(0, max) : '';
 const json = (o, s=200) => new Response(JSON.stringify(o), {
   status:s, headers:{ 'content-type':'application/json', 'cache-control':'no-store' }
 });
@@ -57,6 +65,21 @@ async function tg(token, method, body) {
       ? { method:'POST', body }
       : { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify(body) });
     return r.ok;
+  } catch { return false; }
+}
+
+// Cloudflare Turnstile server-side check; skipped only if the secret is not configured
+async function turnstileOk(env, token, ip) {
+  if (!env.TURNSTILE_SECRET_KEY) return true;
+  if (typeof token !== 'string' || !token || token.length > 2048) return false;
+  const body = new FormData();
+  body.append('secret', env.TURNSTILE_SECRET_KEY);
+  body.append('response', token);
+  if (ip) body.append('remoteip', ip);
+  try {
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method:'POST', body });
+    const j = await r.json();
+    return j.success === true;
   } catch { return false; }
 }
 
@@ -95,27 +118,32 @@ export async function onRequestPost({ request, env }) {
   // honeypot: боты заполняют скрытое поле — молча «успешно» выходим
   if (p.hp) return json({ ok:true });
 
-  const d = {};
-  const src = p.data && typeof p.data === 'object' ? p.data : {};
-  for (const k of Object.keys(LABELS)) d[k] = str(src[k], k === 'name' || k === 'contact' ? 200 : MAX_FIELD);
-  if (!d.name || !d.contact) return json({ ok:false, error:'required' }, 400);
+  if (!(await turnstileOk(env, form.get('cf-turnstile-response'), request.headers.get('CF-Connecting-IP'))))
+    return json({ ok:false, error:'captcha' }, 403);
 
   const files = form.getAll('voice')
     .filter(f => f && typeof f === 'object' && f.size > 0 && f.size <= MAX_FILE && String(f.type).startsWith('audio/'))
     .slice(0, MAX_FILES);
 
+  const d = {};
+  const src = p.data && typeof p.data === 'object' ? p.data : {};
+  for (const k of Object.keys(LABELS)) d[k] = str(src[k], k === 'name' || k === 'contact' ? 200 : MAX_FIELD);
+  if (!d.name || !d.contact) return json({ ok:false, error:'required' }, 400);
+  if (!files.length && (!d.activity || !d.services)) return json({ ok:false, error:'required' }, 400);
+
+
   const trusted = p.trusted && typeof p.trusted === 'object' ? p.trusted : {};
-  const trustedN = new Set(SECTIONS.map(s => s.n).filter(n => trusted[n] === true));
+  const trustedN = new Set(SECTIONS.map(s => s.n).filter(n => TRUSTABLE.has(n) && trusted[n] === true));
 
   const L = [];
   L.push('🟡 <b>Новый бриф — altyn·click</b>');
   L.push('');
   L.push('👤 <b>Имя:</b> ' + esc(d.name));
   L.push('📞 <b>Контакт:</b> ' + esc(d.contact));
-  if (d.bizname) L.push('🏪 <b>Бизнес:</b> ' + esc(d.bizname));
-  if (d.socials) L.push('🔗 <b>Соцсети:</b> ' + esc(d.socials));
+  for (const k of HEAD) if (d[k]) L.push('• <b>' + LABELS[k] + ':</b> ' + esc(d[k]));
   L.push('⚙️ <b>Режим:</b> ' + (p.mode === 'fast' ? 'быстрый ⚡️' : 'подробный 📋'));
-  if (p.trustAll === true) L.push('✨ <b>Доверяет решения: да</b>');
+  if (p.trustAll === true) L.push('✨ <b>Доверяет остальное: да</b>');
+  if (files.length) L.push('🎙 <b>Есть голосовые — слушать в первую очередь</b>');
 
   for (const s of SECTIONS) {
     L.push('');
@@ -125,9 +153,11 @@ export async function onRequestPost({ request, env }) {
     for (const k of s.keys) {
       if (d[k]) { L.push('• <b>' + LABELS[k] + ':</b> ' + esc(d[k])); any = true; }
     }
-    if (!any) L.push('• (пусто)');
+    if (!any) L.push(s.n === 2 && files.length ? '• (рассказал(а) в голосовом)' : '• (пусто)');
   }
 
+  const empty = SECTIONS.filter(s => !trustedN.has(s.n) && !s.keys.some(k => d[k])).length;
+  if (empty || trustedN.size) { L.push(''); L.push('⚠️ <b>Бриф неполный — нужен созвон/уточнения</b>'); }
   if (files.length) { L.push(''); L.push('🎙 <b>Голосовых:</b> ' + files.length); }
 
   L.push('');

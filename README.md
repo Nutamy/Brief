@@ -36,18 +36,27 @@ wrangler pages deploy . --project-name=altyn-click
 | `assets/brief.js` | Логика формы |
 | `assets/brief.css` | **Собранный** Tailwind + стили (не править вручную) |
 | `src/brief.css`, `tailwind.config.js` | Исходники стилей |
+| `build.mjs` | Сборка CSS + версии файлов (`?v=хеш`) в `index.html` |
 | `favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | Иконки |
 | `_headers` | Заголовки безопасности Cloudflare Pages (CSP, HSTS и др.) |
 | `functions/api/submit.js` | Приём брифа → Telegram (лимиты, проверка Origin) |
 
-### Пересборка CSS после правки классов в `index.html` / `brief.js`
+### Сборка после любых правок `index.html`, `src/brief.css` или `assets/brief.js`
 
 ```bash
-npx tailwindcss@3 -i src/brief.css -o assets/brief.css --minify
+node build.mjs
 ```
 
-Без пересборки новые Tailwind-классы не появятся на сайте.
+Скрипт пересобирает CSS и проставляет в `index.html` новые `?v=…` у CSS и JS.
+Без этого новые классы не появятся, а браузеры могут показать старую версию файлов (они кешируются на год).
+
+### Кеш и черновики
+
+- `index.html` всегда перепроверяется браузером (`Cache-Control: no-cache` в `_headers`) — обновление видно сразу после деплоя.
+- Черновик брифа хранится в `localStorage` под ключом `altyn_brief_v<SCHEMA>`. **Меняете поля или варианты ответов — увеличьте `SCHEMA` в `assets/brief.js`**: старые черновики удалятся и не перебьют новую форму. Черновики старше 30 дней удаляются автоматически.
 
 ### Секреты
 
-`TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` — только в **Settings → Variables and Secrets** проекта Pages (тип *Secret*). В репозиторий не коммитить.
+`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` и `TURNSTILE_SECRET_KEY` — только в **Settings → Variables and Secrets** проекта Pages (тип *Secret*). В репозиторий не коммитить.
+
+Site key Turnstile (публичный) прописан в `assets/brief.js` → `TS_SITEKEY`. В настройках виджета Turnstile должен быть указан домен сайта (`*.pages.dev` / свой домен).

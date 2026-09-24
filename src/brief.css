@@ -92,5 +92,22 @@
   .warnbar{display:none;background:#FDECEC;border:1.5px solid #F3BDBD;color:#B34040;border-radius:1rem;padding:.85rem 1.1rem;font-size:.9rem;font-weight:600;margin-top:1.25rem;line-height:1.55}
   .warnbar.show{display:block}
 
+  /* icons (SVG sprite) */
+  .ic,.ic-lg,.icon-stroke{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .ic{width:1.05em;height:1.05em;display:inline-block;vertical-align:-.15em}
+  .ic-lg{width:1.6rem;height:1.6rem;display:inline-block;vertical-align:-.2em;color:#C89A3C}
+  .h-step{font-family:'Unbounded',sans-serif;font-weight:600;font-size:1.5rem;line-height:1.25;letter-spacing:-.01em;margin-top:.75rem}
+  @media (min-width:768px){.h-step{font-size:1.875rem}}
+  .navpill{display:inline-flex;align-items:center;gap:.4rem}
+  .trustnote .ic{margin-top:.15rem}
+
+  /* "own option" chip + input */
+  .chip.other{border-style:dashed;display:inline-flex;align-items:center;gap:.35rem}
+  .chip.other.on{border-style:solid}
+  .otherinp{margin-top:.6rem}
+  [data-cond-off]{display:none!important}
+  .warnbar{align-items:flex-start;gap:.55rem}
+  .warnbar.show{display:flex}
+
 @tailwind components;
 @tailwind utilities;
