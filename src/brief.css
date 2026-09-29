@@ -133,5 +133,33 @@
   .chip:focus-visible,.stlink:focus-visible,.dot:focus-visible,.recbtn:focus-visible,.modecard:focus-visible,.btn:focus-visible{outline:3px solid rgba(200,154,60,.55);outline-offset:2px}
   .trustbtn:has(.tcbx:focus-visible){outline:3px solid rgba(200,154,60,.55);outline-offset:2px}
 
+
+  /* hidden attribute must win over component display rules (.btn, .vcov, .restorebar…) */
+  [hidden]{display:none!important}
+
+  /* error bar sticks to the bottom of the viewport so the explanation is always visible next to the red field */
+  .warnbar.show{position:sticky;bottom:12px;z-index:40;box-shadow:0 12px 28px -12px rgba(179,64,64,.45)}
+  .warnbar a{color:#B34040;font-weight:800;text-decoration:underline}
+
+  /* voice note replaces the required star */
+  .vcov{display:inline-flex;align-items:center;gap:.25rem;margin-left:.35rem;font-size:.72rem;font-weight:700;color:#3E9B5F;background:rgba(62,155,95,.1);border-radius:9999px;padding:.1rem .5rem;vertical-align:.1em}
+  .vcov .ic{width:.9em;height:.9em}
+  .lbmulti{font-weight:600}
+  .rhint a{color:#A67C28;font-weight:800;text-decoration:underline}
+
+  /* draft restore banner and small text buttons */
+  .restorebar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;background:#fff;border:1.5px solid #E6DEC9;border-radius:1rem;padding:.75rem 1rem;font-size:.88rem;color:#6F6553;margin-bottom:1.75rem}
+  .resetbtn,.linkbtn{display:inline-flex;align-items:center;gap:.4rem;background:none;border:none;padding:.2rem 0;font:800 13px 'Manrope',sans-serif;color:#A67C28;cursor:pointer}
+  .resetbtn:hover,.linkbtn:hover{text-decoration:underline}
+  .resetbtn:focus-visible,.linkbtn:focus-visible{outline:3px solid rgba(200,154,60,.55);outline-offset:2px;border-radius:.4rem}
+
+  /* attachments */
+  .filebtn{position:relative;display:inline-flex;align-items:center;gap:.5rem;border:1.5px dashed #C89A3C;background:#fff;border-radius:9999px;padding:.6rem 1.1rem;font:800 13px 'Manrope',sans-serif;color:#A67C28;cursor:pointer;transition:.2s}
+  .filebtn:hover{background:#FBF3DF}
+  .filebtn:focus-within{outline:3px solid rgba(200,154,60,.55);outline-offset:2px}
+  .filebtn input{position:absolute;opacity:0;width:0;height:0}
+  .fname{flex:1;min-width:0;font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .h-step:focus{outline:none}
+
 @tailwind components;
 @tailwind utilities;

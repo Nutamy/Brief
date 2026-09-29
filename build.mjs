@@ -10,9 +10,10 @@ execSync('npx --yes tailwindcss@3 -c tailwind.config.js -i src/brief.css -o asse
 const hash = f => createHash('sha256').update(readFileSync(f)).digest('hex').slice(0, 10);
 let html = readFileSync('index.html', 'utf8');
 for (const f of ['assets/brief.css', 'assets/brief.js']) {
-  const re = new RegExp('/' + f.replace('.', '\\.') + '\\?v=[\\w-]+', 'g');
-  if (!re.test(html)) throw new Error('No versioned reference to /' + f + ' in index.html');
-  html = html.replace(re, '/' + f + '?v=' + hash(f));
+  // Relative paths so index.html also works when opened directly from disk (file://)
+  const re = new RegExp('"/?' + f.replace('.', '\\.') + '\\?v=[\\w-]+', 'g');
+  if (!re.test(html)) throw new Error('No versioned reference to ' + f + ' in index.html');
+  html = html.replace(re, '"' + f + '?v=' + hash(f));
 }
 writeFileSync('index.html', html);
 console.log('index.html stamped');

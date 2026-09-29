@@ -12,10 +12,10 @@
 
 <meta name="theme-color" content="#FAF6EE">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="/assets/brief.css?v=ab2e3445d6">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="assets/brief.css?v=d869900128">
 </head>
 
 <body class="antialiased">
@@ -39,6 +39,10 @@
     <symbol id="i-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
     <symbol id="i-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24"><path d="m21 11-8.6 8.6a5 5 0 0 1-7-7L14 4a3.3 3.3 0 0 1 4.7 4.7L10 17.3a1.7 1.7 0 0 1-2.4-2.4L15.5 7"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></symbol>
   </defs>
 </svg>
 
@@ -49,9 +53,9 @@
       <div class="font-disp font-semibold text-base tracking-tight whitespace-nowrap">altyn<span class="text-gold">·click</span></div>
       <div class="flex-1 flex items-center gap-3 min-w-0">
         <div class="flex-1 h-2.5 rounded-full bg-cream border border-line overflow-hidden min-w-[50px]"><div id="pBar" class="h-full pfill rounded-full" style="width:0%"></div></div>
-        <div class="text-xs font-extrabold whitespace-nowrap"><span id="pPct">0%</span><span class="hidden sm:inline text-mut"> · <span id="pStep">Шаг 1 из 8</span></span></div>
+        <div class="text-xs font-extrabold whitespace-nowrap"><span id="pPct">0%</span><span class="text-mut"> · <span id="pStep">Шаг 1 из 8</span></span></div>
       </div>
-      <button type="button" id="modePill" class="navpill" title="Поменять режим заполнения"><svg class="ic"><use href="#i-list"/></svg><span>Подробно</span></button>
+      <button type="button" id="modePill" class="navpill" title="Сменить режим заполнения"><span>Подробно</span><svg class="ic"><use href="#i-swap"/></svg></button>
     </div>
     <nav id="dots" class="flex gap-1.5 md:gap-2 overflow-x-auto nosb pb-2.5" aria-label="Шаги брифа">
       <button type="button" class="dot" data-goto="1"><span class="dn">1</span><span class="dl">Старт</span></button>
@@ -68,6 +72,10 @@
 
 <main class="max-w-3xl mx-auto px-4 md:px-8 pt-10 pb-16">
   <div id="formWrap">
+  <div id="restoreBar" class="restorebar" hidden>
+    <span>Вернула ваши ответы из черновика — можно продолжать с того же места.</span>
+    <button type="button" class="resetbtn" data-reset>Начать заново</button>
+  </div>
   <form id="briefForm" novalidate>
 
     <!-- ШАГ 1 -->
@@ -82,7 +90,7 @@
           <button type="button" class="modecard" data-mode="fast">
             <svg class="ic-lg text-gold"><use href="#i-bolt"/></svg>
             <div class="font-extrabold mt-1">Быстро · ~4 минуты</div>
-            <p class="text-xs text-mut mt-1 leading-relaxed">Только главное: имя, контакт и 3 коротких ответа текстом (или голосом). Остальное — клики по вариантам.</p>
+            <p class="text-xs text-mut mt-1 leading-relaxed">Только главное: контакт, пара строк о бизнесе (или голосовое) и клики по готовым вариантам.</p>
           </button>
           <button type="button" class="modecard" data-mode="full">
             <svg class="ic-lg text-gold"><use href="#i-list"/></svg>
@@ -94,8 +102,17 @@
       </div>
 
       <div class="mt-8 grid sm:grid-cols-2 gap-5">
-        <div><label class="lb" for="f-name">Ваше имя <span class="req">*</span></label><input id="f-name" class="inp" maxlength="200" name="name" autocomplete="given-name" placeholder="Как к вам обращаться"></div>
-        <div><label class="lb" for="f-contact">Контакт для ответа <span class="req">*</span></label><input id="f-contact" class="inp" maxlength="200" name="contact" autocomplete="tel" placeholder="Telegram @, WhatsApp или телефон"></div>
+        <div><label class="lb" for="f-name">Ваше имя <span class="req">*</span></label><input id="f-name" class="inp" maxlength="200" name="name" autocomplete="given-name" enterkeyhint="next" placeholder="Как к вам обращаться"></div>
+        <div><label class="lb" for="f-contact">Контакт для ответа <span class="req">*</span></label><input id="f-contact" class="inp" maxlength="200" name="contact" autocomplete="tel" enterkeyhint="next" placeholder="+7 701 123 45 67 или @ник в Telegram"><p class="hint">Телефон (для звонка или WhatsApp) либо ник в Telegram.</p></div>
+      </div>
+
+      <div class="mt-6">
+        <div class="lb">Как вам удобнее?</div>
+        <div class="chips" data-chips="contactway">
+          <button type="button" class="chip" data-val="Лучше написать">Лучше написать</button>
+          <button type="button" class="chip" data-val="Лучше позвонить">Лучше позвонить</button>
+          <button type="button" class="chip" data-val="Без разницы">Без разницы</button>
+        </div>
       </div>
 
       <div class="mt-6">
@@ -136,7 +153,7 @@
           <button type="button" class="chip" data-val="Не находится в поиске">Не находится в поиске</button>
         </div>
       </div>
-      <input id="hp" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input id="hp" name="hp_x7q" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     </section>
 
     <!-- ШАГ 2 -->
@@ -157,13 +174,15 @@
             <div class="rtimer text-xs text-mut mt-1">0:00 · до 5 минут</div>
           </div>
         </div>
-        <p class="text-sm text-mut mt-3.5 leading-relaxed">Не знаете, что написать? Просто расскажите о бизнесе так, как рассказали бы человеку. Остальное мы разберём сами. <b class="text-ink">С голосовым поля «Чем занимаетесь» и «Услуги» можно не заполнять, а в вопросах о клиентах — отметить только то, что не успели сказать.</b></p>
+        <p class="text-sm text-mut mt-3.5 leading-relaxed">Не знаете, что написать? Просто расскажите о бизнесе так, как рассказали бы человеку. Остальное я разберу сама. <b class="text-ink">С голосовым от 15 секунд поля «Чем занимаетесь» и «Услуги» можно не заполнять, а в вопросах о клиентах — отметить только то, что не успели сказать.</b></p>
         <div class="vlist mt-3 space-y-2"></div>
         <p class="rhint text-xs text-mutd mt-2.5" aria-live="polite"></p>
-        <p class="text-[11px] text-mutd mt-1">Запись отправится вместе с брифом. При перезагрузке страницы записи не сохраняются.</p>
+        <p class="text-[11px] text-mutd mt-1">Запись отправится вместе с брифом и сохранится в черновике, если закрыть страницу.</p>
       </div>
 
       <div class="mt-8 space-y-5">
+        <div><label class="lb" for="f-bizname">Название бизнеса <span class="lbhint">как на вывеске или в Instagram</span></label>
+          <input id="f-bizname" class="inp" maxlength="200" name="bizname" enterkeyhint="next" placeholder="Например: «Дента Плюс»"></div>
         <div><label class="lb" for="f-activity">Чем занимаетесь? <span class="req">*</span></label>
           <textarea id="f-activity" class="inp" maxlength="2000" name="activity" placeholder="Например: семейная стоматология в Алматы, лечим взрослых и детей. Работаем с 2016 года."></textarea>
           <p class="hint">1–2 предложения достаточно.</p></div>
@@ -301,7 +320,6 @@
         </div>
         <label class="trustbtn mt-2"><input type="checkbox" class="tcbx" data-trust="4"><svg class="ic"><use href="#i-spark"/></svg><span>Доверяю вам</span></label>
       </div>
-      <p class="voicenote mt-5" hidden><svg class="ic"><use href="#i-mic"/></svg><span>Вы уже рассказали о бизнесе голосом — отметьте только то, что не успели сказать.</span></p>
       <div class="blk-fields mt-8 space-y-6">
         <div>
           <div class="lb">Что обычно смущает или пугает клиентов? <span class="req">*</span></div>
@@ -379,7 +397,12 @@
             <button type="button" class="chip" data-val="Прайс / презентация">Прайс / презентация</button>
             <button type="button" class="chip" data-val="Ничего — поможете">Ничего — поможете</button>
           </div>
-          <p class="hint">Файлы пришлёте потом в Telegram — загружать сюда не нужно.</p>
+        </div>
+        <div>
+          <div class="lb">Прикрепить файлы <span class="lbhint">по желанию</span></div>
+          <label class="filebtn"><input type="file" id="fileInp" multiple accept="image/*,application/pdf"><svg class="ic"><use href="#i-clip"/></svg><span>Логотип, фото, прайс</span></label>
+          <div id="fileList" class="mt-2.5 space-y-2"></div>
+          <p class="hint">Фото и PDF, до 8 файлов и 25 МБ вместе. Можно прислать и потом в Telegram.</p>
         </div>
       </div>
       <div class="trustnote"><svg class="ic"><use href="#i-spark"/></svg><span>Посмотрю ваши соцсети и 2ГИС и соберу доказательства сама, а недостающее подскажу, как быстро получить.</span></div>
@@ -408,6 +431,10 @@
           </div>
           <p class="hint">Одно главное действие — так сайт приносит больше обращений. Остальные способы связи тоже будут.</p>
         </div>
+        <div class="dhide"><label class="lb" for="f-pubphone">Номер или ник для кнопок на сайте <span class="lbhint">если не тот, что для связи со мной</span></label>
+          <input id="f-pubphone" class="inp" maxlength="200" name="pubphone" enterkeyhint="next" placeholder="+7 777 000 00 00 — WhatsApp администратора"></div>
+        <div data-if="format=У нас на месте;action=Прийти по адресу"><label class="lb" for="f-addr">Адрес и часы работы</label>
+          <input id="f-addr" class="inp" maxlength="300" name="addr" enterkeyhint="next" placeholder="Абая 10, 2 этаж · пн–сб 10:00–20:00"><p class="hint">Если всё верно указано в 2ГИС — можно не писать.</p></div>
         <div data-if="action=Оставить заявку на сайте">
           <div class="lb">Куда присылать заявки с сайта?</div>
           <div class="chips" data-chips="leadto" data-multi data-other="Например: в CRM">
@@ -536,7 +563,7 @@
             <button type="button" class="chip" data-val="Фирменные шрифты">Фирменные шрифты</button>
             <button type="button" class="chip" data-val="Вывеска, визитки, упаковка">Вывеска, визитки, упаковка</button>
           </div>
-          <p class="hint">Файлы пришлёте потом в Telegram — цвета возьму оттуда.</p>
+          <p class="hint">Файлы прикрепите на шаге «Доверие» или пришлите в Telegram — цвета возьму оттуда.</p>
         </div>
         <div data-if="brand=Есть|Есть только логотип">
           <div class="lb">Что делаем со стилем?</div>
@@ -558,6 +585,33 @@
             <button type="button" class="chip" data-val="Таймеров и «скидка сгорает»">Таймеров «скидка сгорает»</button>
             <button type="button" class="chip" data-val="Много анимации">Много анимации</button>
           </div>
+        </div>
+        <div>
+          <div class="lb">Домен (адрес сайта)</div>
+          <div class="chips" data-chips="domain">
+            <button type="button" class="chip" data-val="Есть домен и доступы">Есть домен и доступы</button>
+            <button type="button" class="chip" data-val="Домен есть, доступов нет">Домен есть, доступов нет</button>
+            <button type="button" class="chip" data-val="Нет домена — поможете">Нет — поможете</button>
+            <button type="button" class="chip" data-val="Не знаю">Не знаю</button>
+          </div>
+        </div>
+        <div class="dhide">
+          <div class="lb">Кто будет менять цены и фото после запуска?</div>
+          <div class="chips" data-chips="updates">
+            <button type="button" class="chip" data-val="Сами — нужно простое редактирование">Сами — нужно простое редактирование</button>
+            <button type="button" class="chip" data-val="Вы — по запросу">Вы — по запросу</button>
+            <button type="button" class="chip" data-val="Меняется редко">Меняется редко</button>
+          </div>
+        </div>
+        <div>
+          <div class="lb">Бюджет</div>
+          <div class="chips" data-chips="budget">
+            <button type="button" class="chip" data-val="Самый доступный вариант">Самый доступный вариант</button>
+            <button type="button" class="chip" data-val="Баланс цены и возможностей">Баланс цены и возможностей</button>
+            <button type="button" class="chip" data-val="Готовы вложиться в максимум">Готовы вложиться в максимум</button>
+            <button type="button" class="chip" data-val="Сначала хочу узнать цену">Сначала хочу узнать цену</button>
+          </div>
+          <p class="hint">Точную стоимость пришлю вместе с планом страницы.</p>
         </div>
         <div>
           <div class="lb">Когда планируете запуск?</div>
@@ -583,13 +637,18 @@
 
       <div id="tsBox" class="mt-5"></div>
 
-      <p class="text-xs text-mutd mt-5 leading-relaxed">Нажимая «Отправить бриф», вы соглашаетесь на обработку указанных данных (имя, контакт, ответы и голосовые) для подготовки предложения и связи с вами. Никакого спама. Черновик сохраняется в этом браузере — можно вернуться позже.</p>
+      <p class="text-xs text-mutd mt-5 leading-relaxed">Нажимая «Отправить бриф», вы соглашаетесь на обработку указанных данных (имя, контакт, ответы, голосовые и файлы) для подготовки предложения и связи с вами. Никакого спама. Черновик сохраняется в этом браузере — можно вернуться позже.</p>
+      <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+        <button type="button" class="linkbtn" data-copy><svg class="ic"><use href="#i-down"/></svg>Скачать копию ответов</button>
+        <button type="button" class="linkbtn" data-reset><svg class="ic"><use href="#i-undo"/></svg>Начать заново</button>
+      </div>
     </section>
 
     <!-- навигация -->
     <div id="warnbar" class="warnbar" role="alert"></div>
     <div class="mt-8 flex items-center justify-between gap-4">
       <button type="button" id="btnBack" class="btn btn-ghost px-5 sm:px-7 py-3.5" style="visibility:hidden"><svg class="ic"><use href="#i-left"/></svg>Назад</button>
+      <button type="button" id="btnToSum" class="btn btn-ghost px-5 sm:px-7 py-3.5 ml-auto" hidden>К итогу</button>
       <button type="button" id="btnNext" class="btn btn-gold px-5 sm:px-8 py-3.5"><span id="btnNextText">Дальше</span><svg class="ic" id="btnNextIc"><use href="#i-right"/></svg></button>
     </div>
   </form>
@@ -602,9 +661,13 @@
         <svg class="w-10 h-10 icon-stroke" style="stroke-width:2.5"><use href="#i-check"/></svg>
       </div>
       <h2 class="font-disp font-semibold text-2xl md:text-3xl mt-6">Спасибо! Бриф получен.</h2>
-      <p class="text-mut mt-4 leading-relaxed">Я изучу информацию и свяжусь с вами.</p>
-      <p class="text-sm text-mut mt-3">Срочнее? Пишите сразу: <a class="text-golddeep font-bold" href="https://t.me/altynclick" target="_blank" rel="noopener">@altynclick</a></p>
-      <button type="button" id="btnAgain" class="btn btn-ghost mt-8 px-7 py-3.5">Заполнить ещё один бриф</button>
+      <p class="text-mut mt-4 leading-relaxed">В течение рабочего дня пришлю план страницы и точную стоимость<span id="doneTo"></span>.</p>
+      <p class="text-sm text-mut mt-3">Есть логотип, фото или прайс? Отправьте их в Telegram — прикреплю к вашему брифу.</p>
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <a class="btn btn-gold px-7 py-3.5" href="https://t.me/altynclick" target="_blank" rel="noopener"><svg class="ic"><use href="#i-send"/></svg>Отправить файлы в Telegram</a>
+        <button type="button" class="btn btn-ghost px-7 py-3.5" data-copy><svg class="ic"><use href="#i-down"/></svg>Копия ответов</button>
+      </div>
+      <button type="button" id="btnAgain" class="linkbtn mt-7">Заполнить ещё один бриф</button>
     </div>
   </div>
 </main>
@@ -613,7 +676,7 @@
   <p class="text-center text-xs text-mutd">Ваши ответы видите только я · altyn·click · <a href="https://t.me/altynclick" target="_blank" rel="noopener" class="text-golddeep font-bold">@altynclick</a></p>
 </footer>
 
-<script src="/assets/brief.js?v=8d0ca7484b" defer></script>
+<script src="assets/brief.js?v=a7468c6b58" defer></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </body>
 </html>

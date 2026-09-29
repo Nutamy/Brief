@@ -1,37 +1,40 @@
 // functions/api/submit.js — пересылка брифа в Telegram
 const LABELS = {
-  name:'Имя', contact:'Контакт', niche:'Сфера', hassite:'Сайт сейчас', socials:'Instagram / 2ГИС',
+  name:'Имя', contact:'Контакт', contactway:'Как удобнее связаться', niche:'Сфера', hassite:'Сайт сейчас', socials:'Instagram / 2ГИС',
   siteurl:'Текущий сайт', siteissues:'Не устраивает в сайте',
-  activity:'Чем занимается', city:'Город', format:'Формат работы', services:'Услуги / товары',
+  bizname:'Название', activity:'Чем занимается', city:'Город', format:'Формат работы', services:'Услуги / товары',
   top:'Главные услуги', avgcheck:'Чек',
   who:'Кто обращается', decider:'Кто принимает решение', situation:'С чем приходят', important:'Важно при выборе',
   why:'Почему выбирают', whyfact:'Конкретный пример', thanks:'За что благодарят и рекомендуют',
   doubts:'Что смущает', faq:'Вопросы перед покупкой', refuse:'Почему не покупают', rivals:'Сравнивают с',
   proof:'Доказательства', numbers:'Цифры и условия', has:'Материалы',
-  action:'Главное действие', leadto:'Куда слать заявки', extras:'Ещё на сайте', booking:'Сервис записи',
+  action:'Главное действие', pubphone:'Контакт для кнопок', addr:'Адрес и часы', leadto:'Куда слать заявки', extras:'Ещё на сайте', booking:'Сервис записи',
   afterlead:'После заявки', responder:'Кто отвечает', speed:'Скорость ответа', sources:'Откуда клиенты',
   lang:'Языки', kztext:'Тексты на казахском', entext:'Тексты на английском',
   brand:'Фирменный стиль', brandparts:'Что есть из стиля', brandkeep:'Что делаем со стилем',
-  examples:'Нравятся сайты', notneed:'Не нужно на сайте', terms:'Сроки'
+  examples:'Нравятся сайты', notneed:'Не нужно на сайте', domain:'Домен', updates:'Кто обновляет сайт',
+  budget:'Бюджет', terms:'Сроки'
 };
-const HEAD = ['niche','hassite','siteurl','siteissues','socials'];
+const HEAD = ['contactway','niche','hassite','siteurl','siteissues','socials'];
 const SECTIONS = [
-  { n:2, t:'Бизнес и услуги', keys:['activity','city','format','services','top','avgcheck'] },
+  { n:2, t:'Бизнес и услуги', keys:['bizname','activity','city','format','services','top','avgcheck'] },
   { n:3, t:'Клиенты',         keys:['who','decider','situation','important','why','whyfact','thanks'] },
   { n:4, t:'Сомнения',        keys:['doubts','faq','refuse','rivals'] },
   { n:5, t:'Доверие',         keys:['proof','numbers','has'] },
-  { n:6, t:'Заявки',          keys:['action','leadto','extras','booking','afterlead','responder','speed','sources'] },
-  { n:7, t:'Сайт',            keys:['lang','kztext','entext','brand','brandparts','brandkeep','examples','notneed','terms'] }
+  { n:6, t:'Заявки',          keys:['action','pubphone','addr','leadto','extras','booking','afterlead','responder','speed','sources'] },
+  { n:7, t:'Сайт',            keys:['lang','kztext','entext','brand','brandparts','brandkeep','examples','notneed','domain','updates','budget','terms'] }
 ];
 const VOICE_TOPICS = { business:'о бизнесе', thanks:'за что благодарят' };
 const TRUSTABLE = new Set([3,4,5,6,7]);
 
 // Abuse limits: the endpoint is public, so every input is bounded
-const MAX_BODY    = 50 * 1024 * 1024;  // whole multipart request
+const MAX_BODY    = 95 * 1024 * 1024;  // whole multipart request (Pages limit is 100 MB)
 const MAX_PAYLOAD = 64 * 1024;         // JSON with text answers
 const MAX_FIELD   = 2000;              // mirrors maxlength in the form
 const MAX_FILES   = 4;                 // mirrors MAXV in the recorder
 const MAX_FILE    = 15 * 1024 * 1024;  // 5 min of opus/aac is far below this
+const MAX_ATTACH  = 8;                 // mirrors MAXF in the form
+const MAX_ATTACH_TOTAL = 25 * 1024 * 1024;
 const TG_LIMIT    = 4000;              // Telegram hard limit is 4096
 
 const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -121,15 +124,22 @@ export async function onRequestPost({ request, env }) {
   catch { return json({ ok:false, error:'payload' }, 400); }
   if (!p || typeof p !== 'object') return json({ ok:false, error:'payload' }, 400);
 
-  // honeypot: боты заполняют скрытое поле — молча «успешно» выходим
-  if (p.hp) return json({ ok:true });
-
   if (!(await turnstileOk(env, form.get('cf-turnstile-response'), request.headers.get('CF-Connecting-IP'))))
     return json({ ok:false, error:'captcha' }, 403);
+  // Honeypot filled after a passed captcha is more likely browser autofill than a bot:
+  // deliver the brief with a warning instead of silently dropping a real lead
+  const hpFlag = !!p.hp;
 
   const files = form.getAll('voice')
     .filter(f => f && typeof f === 'object' && f.size > 0 && f.size <= MAX_FILE && String(f.type).startsWith('audio/'))
     .slice(0, MAX_FILES);
+
+  let attachTotal = 0;
+  const attachments = form.getAll('file')
+    .filter(f => f && typeof f === 'object' && f.size > 0 && f.size <= MAX_ATTACH_TOTAL
+      && (String(f.type).startsWith('image/') || f.type === 'application/pdf'))
+    .slice(0, MAX_ATTACH)
+    .filter(f => (attachTotal += f.size) <= MAX_ATTACH_TOTAL);
 
   const d = {};
   const src = p.data && typeof p.data === 'object' ? p.data : {};
@@ -142,17 +152,25 @@ export async function onRequestPost({ request, env }) {
   const trustedN = new Set(SECTIONS.map(s => s.n).filter(n => TRUSTABLE.has(n) && trusted[n] === true));
 
   const L = [];
-  L.push('🟡 <b>Новый бриф — altyn·click</b>');
+  L.push('🟡 <b>Новый бриф — altyn·click</b>' + (d.bizname ? ' · ' + esc(d.bizname) : ''));
+  if (hpFlag) L.push('⚠️ <i>Заполнено скрытое поле — возможно спам, проверьте контакт</i>');
   L.push('');
   L.push('👤 <b>Имя:</b> ' + esc(d.name));
   L.push('📞 <b>Контакт:</b> ' + esc(d.contact));
   for (const k of HEAD) if (d[k]) L.push('• <b>' + LABELS[k] + ':</b> ' + esc(d[k]));
   L.push('⚙️ <b>Режим:</b> ' + (p.mode === 'fast' ? 'быстрый ⚡️' : 'подробный 📋'));
   if (files.length) L.push('🎙 <b>Есть голосовые — слушать в первую очередь</b>');
+  if (attachments.length) L.push('📎 <b>Файлов от клиента:</b> ' + attachments.length);
 
   for (const s of SECTIONS) {
     L.push('');
-    if (trustedN.has(s.n)) { L.push('✨ <b>' + s.t + '</b> — доверено мне'); continue; }
+    const isTrusted = trustedN.has(s.n);
+    // A trusted block may still carry answers given before the checkbox was ticked — keep them
+    if (isTrusted) {
+      L.push('✨ <b>' + s.t + '</b> — доверено мне');
+      for (const k of s.keys) if (d[k]) L.push('• <b>' + LABELS[k] + ':</b> ' + esc(d[k]));
+      continue;
+    }
     L.push('<b>— ' + s.t + ' —</b>');
     let any = false;
     for (const k of s.keys) {
@@ -193,6 +211,17 @@ export async function onRequestPost({ request, env }) {
     if (!(await tg(TOKEN, 'sendDocument', fd2))) {
       await sendText(TOKEN, CHAT, `⚠️ Голосовое ${i + 1} от ${esc(d.name)} не доставлено — попросите прислать в Telegram.`);
     }
+  }
+
+  for (let i = 0; i < attachments.length; i++) {
+    const f = attachments[i];
+    const name = str(f.name, 120) || `file_${i + 1}`;
+    const fd = new FormData();
+    fd.append('chat_id', CHAT);
+    fd.append('document', f, name);
+    fd.append('caption', ('📎 Файл от ' + (d.name || 'клиента') + (d.bizname ? ' (' + d.bizname + ')' : '')).slice(0, 200));
+    if (!(await tg(TOKEN, 'sendDocument', fd)))
+      await sendText(TOKEN, CHAT, `⚠️ Файл «${esc(name)}» от ${esc(d.name)} не доставлен — попросите прислать в Telegram.`);
   }
 
   return json({ ok:true });
