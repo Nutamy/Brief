@@ -4,24 +4,24 @@ const LABELS = {
   siteurl:'Текущий сайт', siteissues:'Не устраивает в сайте',
   bizname:'Название', activity:'Чем занимается', city:'Город', format:'Формат работы', services:'Услуги / товары',
   top:'Главные услуги', avgcheck:'Чек',
-  who:'Кто обращается', decider:'Кто принимает решение', situation:'С чем приходят', important:'Важно при выборе',
-  why:'Почему выбирают', whyfact:'Конкретный пример', thanks:'За что благодарят и рекомендуют',
+  who:'Кто обращается', decider:'Кто принимает решение', situation:'С чем приходят',
+  why:'За что хвалят', thanks:'Как хвалят (своими словами)',
   doubts:'Что смущает', faq:'Вопросы перед покупкой', refuse:'Почему не покупают', rivals:'Сравнивают с',
   proof:'Доказательства', numbers:'Цифры и условия', has:'Материалы',
-  action:'Главное действие', pubphone:'Контакт для кнопок', addr:'Адрес и часы', leadto:'Куда слать заявки', extras:'Ещё на сайте', booking:'Сервис записи',
+  action:'Главная кнопка', pubsame:'Контакт на кнопке', pubphone:'Контакт для кнопок', addr:'Адрес и часы', leadto:'Куда слать заявки', extras:'Ещё на сайте', booking:'Сервис записи',
   afterlead:'После заявки', responder:'Кто отвечает', speed:'Скорость ответа', sources:'Откуда клиенты',
   lang:'Языки', kztext:'Тексты на казахском', entext:'Тексты на английском',
   brand:'Фирменный стиль', brandparts:'Что есть из стиля', brandkeep:'Что делаем со стилем',
-  examples:'Нравятся сайты', notneed:'Не нужно на сайте', domain:'Домен', updates:'Кто обновляет сайт',
+  examples:'Нравятся сайты', notneed:'Не нужно на сайте', domain:'Доступ к сайту и домену', updates:'Кто обновляет сайт',
   budget:'Бюджет', terms:'Сроки'
 };
 const HEAD = ['contactway','niche','hassite','siteurl','siteissues','socials'];
 const SECTIONS = [
-  { n:2, t:'Бизнес и услуги', keys:['bizname','activity','city','format','services','top','avgcheck'] },
-  { n:3, t:'Клиенты',         keys:['who','decider','situation','important','why','whyfact','thanks'] },
+  { n:2, t:'Бизнес и услуги', keys:['activity','city','format','services','top','avgcheck'] },
+  { n:3, t:'Клиенты',         keys:['who','decider','situation','why','thanks'] },
   { n:4, t:'Сомнения',        keys:['doubts','faq','refuse','rivals'] },
   { n:5, t:'Доверие',         keys:['proof','numbers','has'] },
-  { n:6, t:'Заявки',          keys:['action','pubphone','addr','leadto','extras','booking','afterlead','responder','speed','sources'] },
+  { n:6, t:'Заявки',          keys:['action','pubsame','pubphone','addr','leadto','extras','booking','afterlead','responder','speed','sources'] },
   { n:7, t:'Сайт',            keys:['lang','kztext','entext','brand','brandparts','brandkeep','examples','notneed','domain','updates','budget','terms'] }
 ];
 const VOICE_TOPICS = { business:'о бизнесе', thanks:'за что благодарят' };

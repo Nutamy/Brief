@@ -90,12 +90,12 @@
           <button type="button" class="modecard" data-mode="fast">
             <svg class="ic-lg text-gold"><use href="#i-bolt"/></svg>
             <div class="font-extrabold mt-1">Быстро · ~4 минуты</div>
-            <p class="text-xs text-mut mt-1 leading-relaxed">Только главное: контакт, пара строк о бизнесе (или голосовое) и клики по готовым вариантам.</p>
+            <p class="text-xs text-mut mt-1 leading-relaxed">Только главное: контакт, два коротких ответа о бизнесе (или голосовое), остальное — клики по готовым вариантам.</p>
           </button>
           <button type="button" class="modecard" data-mode="full">
             <svg class="ic-lg text-gold"><use href="#i-list"/></svg>
             <div class="font-extrabold mt-1">Подробно · ~10 минут</div>
-            <p class="text-xs text-mut mt-1 leading-relaxed">Больше вопросов о клиентах и сайте — точнее тексты и меньше уточнений потом.</p>
+            <p class="text-xs text-mut mt-1 leading-relaxed">Плюс вопросы о клиентах, заявках и оформлении — точнее тексты и почти без уточнений потом.</p>
           </button>
         </div>
         <p class="text-xs text-mutd mt-2.5 leading-relaxed">Режим можно поменять в любой момент кнопкой в шапке.</p>
@@ -106,7 +106,7 @@
         <div><label class="lb" for="f-contact">Контакт для ответа <span class="req">*</span></label><input id="f-contact" class="inp" maxlength="200" name="contact" autocomplete="tel" enterkeyhint="next" placeholder="+7 701 123 45 67 или @ник в Telegram"><p class="hint">Телефон (для звонка или WhatsApp) либо ник в Telegram.</p></div>
       </div>
 
-      <div class="mt-6">
+      <div class="mt-6 dhide">
         <div class="lb">Как вам удобнее?</div>
         <div class="chips" data-chips="contactway">
           <button type="button" class="chip" data-val="Лучше написать">Лучше написать</button>
@@ -139,7 +139,8 @@
       </div>
 
       <div class="mt-5 grid sm:grid-cols-2 gap-5">
-        <div><label class="lb" for="f-socials">Instagram / 2ГИС <span class="lbhint">если есть</span></label><input id="f-socials" class="inp" maxlength="200" name="socials" placeholder="Ссылка или @ник"><p class="hint">Отзывы и фото оттуда посмотрю сама.</p></div>
+        <div><label class="lb" for="f-bizname">Название бизнеса <span class="lbhint">как на вывеске</span></label><input id="f-bizname" class="inp" maxlength="200" name="bizname" enterkeyhint="next" placeholder="Например: «Дента Плюс»"></div>
+        <div><label class="lb" for="f-socials">Instagram / 2ГИС <span class="lbhint">если есть</span></label><input id="f-socials" class="inp" maxlength="200" name="socials" enterkeyhint="next" placeholder="Ссылка или @ник"><p class="hint">Отзывы и фото оттуда посмотрю сама — описывать их не нужно.</p></div>
         <div data-if="hassite=Есть сайт"><label class="lb" for="f-siteurl">Адрес текущего сайта</label><input id="f-siteurl" class="inp" maxlength="200" name="siteurl" placeholder="example.kz"></div>
       </div>
       <div class="mt-5 dhide" data-if="hassite=Есть сайт">
@@ -181,13 +182,19 @@
       </div>
 
       <div class="mt-8 space-y-5">
-        <div><label class="lb" for="f-bizname">Название бизнеса <span class="lbhint">как на вывеске или в Instagram</span></label>
-          <input id="f-bizname" class="inp" maxlength="200" name="bizname" enterkeyhint="next" placeholder="Например: «Дента Плюс»"></div>
         <div><label class="lb" for="f-activity">Чем занимаетесь? <span class="req">*</span></label>
           <textarea id="f-activity" class="inp" maxlength="2000" name="activity" placeholder="Например: семейная стоматология в Алматы, лечим взрослых и детей. Работаем с 2016 года."></textarea>
-          <p class="hint">1–2 предложения достаточно.</p></div>
+          <p class="hint">Одного-двух предложений хватит: что делаете и для кого.</p></div>
         <div class="grid sm:grid-cols-2 gap-5">
-          <div><label class="lb" for="f-city">Город <span class="req">*</span></label><input id="f-city" class="inp" maxlength="200" name="city" placeholder="Алматы, Астана, Шымкент…"></div>
+          <div>
+            <div class="lb">Город <span class="req">*</span></div>
+            <div class="chips" data-chips="city" data-other="Ваш город">
+              <button type="button" class="chip" data-val="Алматы">Алматы</button>
+              <button type="button" class="chip" data-val="Астана">Астана</button>
+              <button type="button" class="chip" data-val="Шымкент">Шымкент</button>
+              <button type="button" class="chip" data-val="Несколько городов / весь Казахстан">Несколько городов</button>
+            </div>
+          </div>
           <div>
             <div class="lb">Где работаете с клиентами?</div>
             <div class="chips" data-chips="format" data-multi data-other="Например: на выставках">
@@ -200,9 +207,9 @@
         </div>
         <div><label class="lb" for="f-services">Основные услуги или товары <span class="req">*</span></label>
           <textarea id="f-services" class="inp" maxlength="2000" name="services" placeholder="Лечение кариеса — от 15 000 ₸; чистка — 18 000 ₸; имплант — от 250 000 ₸"></textarea>
-          <p class="hint">Цены можно писать примерно или «по запросу».</p></div>
-        <div class="dhide"><label class="lb" for="f-top">Какие 1–3 услуги важнее всего продавать через сайт?</label>
-          <input id="f-top" class="inp" maxlength="200" name="top" placeholder="Самые выгодные или те, которых хочется больше"></div>
+          <p class="hint">Можно просто списком через запятую. Цены — примерно, «по запросу» или без них.</p></div>
+        <div class="dhide"><label class="lb" for="f-top">Каких заказов вам хочется больше всего? <span class="lbhint">1–3 услуги</span></label>
+          <input id="f-top" class="inp" maxlength="200" name="top" placeholder="Самые выгодные или самые любимые"></div>
         <div>
           <div class="lb">Сколько обычно платит клиент за раз?</div>
           <div class="chips" data-chips="avgcheck">
@@ -231,17 +238,17 @@
         <div>
           <div class="lb">Кто чаще всего к вам обращается? <span class="req">*</span></div>
           <div class="chips" data-chips="who" data-multi data-other="Например: владельцы собак, студенты">
-            <button type="button" class="chip" data-val="Частные клиенты">Частные клиенты</button>
             <button type="button" class="chip" data-val="Женщины">Женщины</button>
             <button type="button" class="chip" data-val="Мужчины">Мужчины</button>
+            <button type="button" class="chip" data-val="Семьи / пары">Семьи / пары</button>
             <button type="button" class="chip" data-val="Родители для детей">Родители для детей</button>
             <button type="button" class="chip" data-val="Пожилые / дети для родителей">Пожилые / для родителей</button>
             <button type="button" class="chip" data-val="Компании">Компании</button>
             <button type="button" class="chip" data-val="Туристы / приезжие">Туристы / приезжие</button>
           </div>
         </div>
-        <div>
-          <div class="lb">Кто обычно принимает решение обратиться к вам?</div>
+        <div class="dhide" data-if="who=Родители для детей|Пожилые / дети для родителей|Компании|Семьи / пары">
+          <div class="lb">Кто обычно решает, обращаться ли к вам?</div>
           <div class="chips" data-chips="decider" data-multi data-other="Например: бухгалтер выбирает, директор платит">
             <button type="button" class="chip" data-val="Сам клиент">Сам клиент</button>
             <button type="button" class="chip" data-val="Родитель">Родитель</button>
@@ -249,7 +256,7 @@
             <button type="button" class="chip" data-val="Руководитель компании">Руководитель компании</button>
             <button type="button" class="chip" data-val="Несколько человек">Несколько человек</button>
           </div>
-          <p class="hint">Иногда услугой пользуется один человек, а решает другой — например, ребёнок и родитель. Сайт должен говорить с тем, кто решает.</p>
+          <p class="hint">Иногда услугой пользуется один, а решает другой — например, ребёнок и родитель. Сайт будет говорить с тем, кто решает.</p>
         </div>
         <div class="dhide">
           <div class="lb">С чем обычно приходят?</div>
@@ -262,39 +269,25 @@
             <button type="button" class="chip" data-val="Праздник / событие">Праздник / событие</button>
           </div>
         </div>
-        <div class="dhide">
-          <div class="lb">Что для клиента самое важное при выборе?</div>
-          <div class="chips" data-chips="important" data-multi data-other="Своими словами">
-            <button type="button" class="chip" data-val="Цена">Цена</button>
-            <button type="button" class="chip" data-val="Результат">Результат</button>
-            <button type="button" class="chip" data-val="Скорость">Скорость</button>
-            <button type="button" class="chip" data-val="Близко к дому или работе">Близко к дому или работе</button>
-            <button type="button" class="chip" data-val="Отзывы и советы знакомых">Отзывы и советы знакомых</button>
-            <button type="button" class="chip" data-val="Конкретный специалист">Конкретный специалист</button>
-            <button type="button" class="chip" data-val="Гарантия">Гарантия</button>
-            <button type="button" class="chip" data-val="Удобное время">Удобное время</button>
-            <button type="button" class="chip" data-val="Не знаю">Не знаю</button>
-          </div>
-        </div>
         <div>
-          <div class="lb">Почему выбирают именно вас? <span class="req">*</span></div>
-          <div class="chips" data-chips="why" data-multi data-other="Своими словами">
-            <button type="button" class="chip" data-val="Качество результата">Качество результата</button>
-            <button type="button" class="chip" data-val="Честные цены">Честные цены</button>
-            <button type="button" class="chip" data-val="Опыт и квалификация">Опыт и квалификация</button>
-            <button type="button" class="chip" data-val="Быстро, соблюдаем сроки">Быстро, соблюдаем сроки</button>
-            <button type="button" class="chip" data-val="Внимательное отношение">Внимательное отношение</button>
-            <button type="button" class="chip" data-val="Удобное расположение">Удобное расположение</button>
-            <button type="button" class="chip" data-val="Даём гарантию">Даём гарантию</button>
+          <div class="lb">За что вас чаще всего хвалят клиенты? <span class="req">*</span></div>
+          <div class="chips" data-chips="why" data-multi data-other="Как говорят клиенты">
+            <button type="button" class="chip" data-val="Хороший результат">Хороший результат</button>
+            <button type="button" class="chip" data-val="Адекватные цены">Адекватные цены</button>
+            <button type="button" class="chip" data-val="Быстро, в срок">Быстро, в срок</button>
+            <button type="button" class="chip" data-val="Понятно всё объясняют">Понятно всё объясняют</button>
+            <button type="button" class="chip" data-val="Вежливые, внимательные">Вежливые, внимательные</button>
+            <button type="button" class="chip" data-val="Конкретного специалиста">Конкретного специалиста</button>
+            <button type="button" class="chip" data-val="Чисто и уютно">Чисто и уютно</button>
+            <button type="button" class="chip" data-val="Удобно добираться">Удобно добираться</button>
+            <button type="button" class="chip" data-val="Гарантия">Гарантия</button>
             <button type="button" class="chip" data-val="Современное оборудование / материалы">Современное оборудование</button>
-            <button type="button" class="chip" data-val="Работаем допоздна / без выходных">Допоздна / без выходных</button>
+            <button type="button" class="chip" data-val="Работают допоздна / без выходных">Допоздна / без выходных</button>
             <button type="button" class="chip" data-val="Рассрочка / Kaspi Red">Рассрочка / Kaspi Red</button>
           </div>
+          <p class="hint">Отмечайте то, что слышите от клиентов. Не помните — нажмите «Доверяю вам»: найду в отзывах.</p>
         </div>
-        <div data-if="why=*"><label class="lb" for="f-whyfact">Если можете, приведите конкретный пример <span class="lbhint">по желанию</span></label>
-          <input id="f-whyfact" class="inp" maxlength="300" name="whyfact" placeholder="«Делаем за 1 день», «врач сам отвечает в WhatsApp», «гарантия 2 года»">
-          <p id="whyHint" class="hint">Конкретный факт убеждает сильнее, чем общие слова.</p></div>
-        <div class="dhide"><label class="lb" for="f-thanks">За что вас благодарят и рекомендуют знакомым? <span class="lbhint">можно цитатой из отзыва</span></label>
+        <div class="dhide"><label class="lb" for="f-thanks">Как именно хвалят — своими словами? <span class="lbhint">фраза из отзыва или переписки</span></label>
           <textarea id="f-thanks" class="inp" maxlength="2000" name="thanks" placeholder="«Впервые не страшно было лечить зуб», «Сделали за 3 дня, как обещали»"></textarea>
           <div class="vmini mt-2.5" data-rec="thanks">
             <button type="button" class="recbtn sm" aria-label="Ответить голосом">
@@ -334,20 +327,17 @@
             <button type="button" class="chip" data-val="Не знаю">Не знаю</button>
           </div>
         </div>
-        <div><label class="lb" for="f-faq">Что чаще всего спрашивают перед покупкой?</label>
+        <div class="dhide"><label class="lb" for="f-faq">Что чаще всего спрашивают перед покупкой?</label>
           <textarea id="f-faq" class="inp" maxlength="2000" name="faq" placeholder="«Сколько длится?», «Есть ли рассрочка?», «Можно с ребёнком?»"></textarea>
           <p class="hint">Из этого сделаем блок «Вопросы» на сайте.</p></div>
         <div class="dhide">
           <div class="lb">Почему человек иногда не покупает после общения с вами? <span class="lbhint">по желанию</span></div>
           <div class="chips" data-chips="refuse" data-multi data-other="Что говорят, когда уходят">
-            <button type="button" class="chip" data-val="Дорого">Дорого</button>
-            <button type="button" class="chip" data-val="Сравнивает с конкурентами">Сравнивает с конкурентами</button>
-            <button type="button" class="chip" data-val="Хочет подумать">Хочет подумать</button>
+            <button type="button" class="chip" data-val="Сравнивает с другими">Сравнивает с другими</button>
+            <button type="button" class="chip" data-val="Хочет подумать / посоветоваться">Хочет подумать, посоветоваться</button>
             <button type="button" class="chip" data-val="Не готов сейчас">Не готов сейчас</button>
-            <button type="button" class="chip" data-val="Долго принимает решение">Долго принимает решение</button>
-            <button type="button" class="chip" data-val="Не доверяет">Не доверяет</button>
-            <button type="button" class="chip" data-val="Не понимает разницу между предложениями">Не понимает разницу между предложениями</button>
-            <button type="button" class="chip" data-val="Не подходит формат / условия">Не подходят формат или условия</button>
+            <button type="button" class="chip" data-val="Не понимает разницу между вариантами">Не понимает разницу между вариантами</button>
+            <button type="button" class="chip" data-val="Не подходят условия / формат">Не подходят условия или формат</button>
             <button type="button" class="chip" data-val="Не знаю">Не знаю</button>
           </div>
         </div>
@@ -369,7 +359,7 @@
       </div>
       <div class="blk-fields mt-8 space-y-6">
         <div>
-          <div class="lb">Что можно показать на сайте? <span class="req">*</span></div>
+          <div class="lb">Что из этого у вас уже есть? <span class="req">*</span></div>
           <div class="chips" data-chips="proof" data-multi data-other="Например: работаем с посольствами">
             <button type="button" class="chip" data-val="Отзывы в 2ГИС / Google">Отзывы в 2ГИС / Google</button>
             <button type="button" class="chip" data-val="Отзывы в Instagram / WhatsApp">Отзывы в Instagram / WhatsApp</button>
@@ -388,7 +378,7 @@
         </div>
         <div data-if="proof=Много лет опыта|Цифры: клиенты, проекты|Гарантия"><label class="lb" for="f-numbers">Цифры и условия</label>
           <input id="f-numbers" class="inp" maxlength="200" name="numbers" placeholder="Например: с 2016 года, 3 000 пациентов, гарантия 2 года"></div>
-        <div>
+        <div class="dhide">
           <div class="lb">Что ещё есть для сайта?</div>
           <div class="chips" data-chips="has" data-multi data-other="Например: каталог в PDF">
             <button type="button" class="chip" data-val="Профессиональные фото">Профессиональные фото</button>
@@ -414,13 +404,13 @@
         <div>
           <div class="eyebrow">Шаг 6 · Заявки</div>
           <h2 class="h-step">Как клиент к вам попадает <svg class="ic-lg"><use href="#i-send"/></svg></h2>
-          <p class="text-mut mt-2.5 leading-relaxed max-w-lg">Чтобы кнопка на сайте вела туда, где вам удобно отвечать, и человек понимал, что будет дальше.</p>
+          <p class="text-mut mt-2.5 leading-relaxed max-w-lg">Чтобы кнопка на сайте вела туда, где вам удобно отвечать.</p>
         </div>
         <label class="trustbtn mt-2"><input type="checkbox" class="tcbx" data-trust="6"><svg class="ic"><use href="#i-spark"/></svg><span>Доверяю вам</span></label>
       </div>
       <div class="blk-fields mt-8 space-y-6">
         <div>
-          <div class="lb">Что человек должен сделать на сайте в первую очередь? <span class="req">*</span></div>
+          <div class="lb">Как вам удобнее всего принимать новых клиентов? <span class="req">*</span></div>
           <div class="chips" data-chips="action" data-other="Например: скачать прайс">
             <button type="button" class="chip" data-val="Написать в WhatsApp">Написать в WhatsApp</button>
             <button type="button" class="chip" data-val="Написать в Telegram">Написать в Telegram</button>
@@ -429,11 +419,18 @@
             <button type="button" class="chip" data-val="Оставить заявку на сайте">Оставить заявку на сайте</button>
             <button type="button" class="chip" data-val="Прийти по адресу">Прийти по адресу</button>
           </div>
-          <p class="hint">Одно главное действие — так сайт приносит больше обращений. Остальные способы связи тоже будут.</p>
+          <p class="hint">Сделаю это главной кнопкой сайта. Остальные способы связи тоже будут.</p>
         </div>
-        <div class="dhide"><label class="lb" for="f-pubphone">Номер или ник для кнопок на сайте <span class="lbhint">если не тот, что для связи со мной</span></label>
+        <div data-if="action=Написать в WhatsApp|Написать в Telegram|Позвонить">
+          <div class="lb">Какой номер или ник ставить на кнопку?</div>
+          <div class="chips" data-chips="pubsame">
+            <button type="button" class="chip" data-val="Тот же, что для связи со мной">Тот же, что для связи со мной</button>
+            <button type="button" class="chip" data-val="Другой">Другой</button>
+          </div>
+        </div>
+        <div data-if="pubsame=Другой"><label class="lb" for="f-pubphone">Номер или ник для кнопок на сайте</label>
           <input id="f-pubphone" class="inp" maxlength="200" name="pubphone" enterkeyhint="next" placeholder="+7 777 000 00 00 — WhatsApp администратора"></div>
-        <div data-if="format=У нас на месте;action=Прийти по адресу"><label class="lb" for="f-addr">Адрес и часы работы</label>
+        <div class="dhide" data-if="format=У нас на месте;action=Прийти по адресу"><label class="lb" for="f-addr">Адрес и часы работы</label>
           <input id="f-addr" class="inp" maxlength="300" name="addr" enterkeyhint="next" placeholder="Абая 10, 2 этаж · пн–сб 10:00–20:00"><p class="hint">Если всё верно указано в 2ГИС — можно не писать.</p></div>
         <div data-if="action=Оставить заявку на сайте">
           <div class="lb">Куда присылать заявки с сайта?</div>
@@ -449,7 +446,7 @@
             <button type="button" class="chip" data-val="Онлайн-запись">Онлайн-запись</button>
             <button type="button" class="chip" data-val="Онлайн-оплата / Kaspi">Онлайн-оплата / Kaspi</button>
             <button type="button" class="chip" data-val="Каталог или прайс">Каталог или прайс</button>
-            <button type="button" class="chip" data-val="Калькулятор стоимости или квиз">Калькулятор стоимости или квиз</button>
+            <button type="button" class="chip" data-val="Калькулятор стоимости / подбор по вопросам">Калькулятор или подбор по вопросам</button>
             <button type="button" class="chip" data-val="Связь с CRM">Связь с CRM</button>
           </div>
         </div>
@@ -515,7 +512,7 @@
         <div>
           <div class="eyebrow">Шаг 7 · Сайт</div>
           <h2 class="h-step">Каким будет сайт <svg class="ic-lg"><use href="#i-site"/></svg></h2>
-          <p class="text-mut mt-2.5 leading-relaxed max-w-lg">Язык, оформление и сроки.</p>
+          <p class="text-mut mt-2.5 leading-relaxed max-w-lg">Язык, оформление и сроки. Стиль и цвета подберу сама.</p>
         </div>
         <label class="trustbtn mt-2"><input type="checkbox" class="tcbx" data-trust="7"><svg class="ic"><use href="#i-spark"/></svg><span>Доверяю вам</span></label>
       </div>
@@ -554,7 +551,7 @@
           </div>
           <p class="hint">Это логотип, цвета и шрифты, в которых оформлены вывеска, соцсети, визитки. Если нет — подберу под нишу.</p>
         </div>
-        <div data-if="brand=Есть">
+        <div class="dhide" data-if="brand=Есть">
           <div class="lb">Что именно есть?</div>
           <div class="chips" data-chips="brandparts" data-multi data-other="Например: фирменный паттерн">
             <button type="button" class="chip" data-val="Логотип">Логотип</button>
@@ -565,7 +562,7 @@
           </div>
           <p class="hint">Файлы прикрепите на шаге «Доверие» или пришлите в Telegram — цвета возьму оттуда.</p>
         </div>
-        <div data-if="brand=Есть|Есть только логотип">
+        <div class="dhide" data-if="brand=Есть|Есть только логотип">
           <div class="lb">Что делаем со стилем?</div>
           <div class="chips" data-chips="brandkeep">
             <button type="button" class="chip" data-val="Оставляем как есть">Оставляем как есть</button>
@@ -586,14 +583,14 @@
             <button type="button" class="chip" data-val="Много анимации">Много анимации</button>
           </div>
         </div>
-        <div>
-          <div class="lb">Домен (адрес сайта)</div>
+        <div data-if="hassite=Есть сайт">
+          <div class="lb">Есть ли доступ к текущему сайту и домену?</div>
           <div class="chips" data-chips="domain">
-            <button type="button" class="chip" data-val="Есть домен и доступы">Есть домен и доступы</button>
-            <button type="button" class="chip" data-val="Домен есть, доступов нет">Домен есть, доступов нет</button>
-            <button type="button" class="chip" data-val="Нет домена — поможете">Нет — поможете</button>
+            <button type="button" class="chip" data-val="Да, доступы есть">Да, доступы есть</button>
+            <button type="button" class="chip" data-val="Домен наш, доступов нет">Домен наш, доступов нет</button>
             <button type="button" class="chip" data-val="Не знаю">Не знаю</button>
           </div>
+          <p class="hint">Нужно, чтобы новый сайт открывался по старому адресу.</p>
         </div>
         <div class="dhide">
           <div class="lb">Кто будет менять цены и фото после запуска?</div>
@@ -603,7 +600,7 @@
             <button type="button" class="chip" data-val="Меняется редко">Меняется редко</button>
           </div>
         </div>
-        <div>
+        <div class="dhide">
           <div class="lb">Бюджет</div>
           <div class="chips" data-chips="budget">
             <button type="button" class="chip" data-val="Самый доступный вариант">Самый доступный вариант</button>
@@ -676,7 +673,7 @@
   <p class="text-center text-xs text-mutd">Ваши ответы видите только я · altyn·click · <a href="https://t.me/altynclick" target="_blank" rel="noopener" class="text-golddeep font-bold">@altynclick</a></p>
 </footer>
 
-<script src="assets/brief.js?v=a7468c6b58" defer></script>
+<script src="assets/brief.js?v=784be9efe4" defer></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </body>
 </html>
