@@ -740,6 +740,21 @@
 
   $('#btnAgain').addEventListener('click',()=>location.reload());
 
+  /* ---------- light inside the glass follows the pointer (as on the main site) ---------- */
+  // Mouse/pen only, never on touch or with reduced motion; --gx/--gy are registered in src/brief.css
+  if(matchMedia('(hover: hover) and (pointer: fine)').matches&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.addEventListener('pointermove',e=>{
+      const el=e.target.closest&&e.target.closest('.glass-panel'); if(!el) return;
+      const r=el.getBoundingClientRect();
+      el.style.setProperty('--gx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+      el.style.setProperty('--gy',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+    },{passive:true});
+    document.addEventListener('pointerout',e=>{
+      const el=e.target.closest&&e.target.closest('.glass-panel');
+      if(el&&!el.contains(e.relatedTarget)){ el.style.removeProperty('--gx'); el.style.removeProperty('--gy'); }
+    },{passive:true});
+  }
+
   /* ---------- start ---------- */
   const restored=restore();
   Object.keys(chipBoxes).forEach(syncChips);

@@ -11,12 +11,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Unbounded:wght@600&display=swap" rel="stylesheet">
 
-<meta name="theme-color" content="#FAF6EE">
+<meta name="theme-color" content="#EDF0F4">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="icon" href="../favicon.ico" sizes="any">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<link rel="stylesheet" href="../assets/brief.css?v=f9da8c3298">
+<link rel="stylesheet" href="../assets/brief.css?v=0fad2606dc">
 </head>
 
 <body class="antialiased">
@@ -46,12 +46,12 @@
   </defs>
 </svg>
 
-<header class="sticky top-0 z-50 bg-paper/95 backdrop-blur border-b border-line">
+<header class="hdr-glass sticky top-0 z-50">
   <div class="max-w-3xl mx-auto px-4 md:px-8">
     <div class="flex items-center gap-3 md:gap-4 h-14">
       <div class="wm font-disp font-semibold text-base tracking-tight whitespace-nowrap">altyn<span class="text-gold">·click</span></div>
       <div class="flex-1 flex items-center gap-3 min-w-0">
-        <div class="flex-1 h-2.5 rounded-full bg-cream border border-line overflow-hidden min-w-[50px]"><div id="pBar" class="h-full pfill rounded-full" style="width:0%"></div></div>
+        <div class="ptrack flex-1 h-2.5 rounded-full overflow-hidden min-w-[50px]"><div id="pBar" class="h-full pfill rounded-full" style="width:0%"></div></div>
         <div class="text-xs font-extrabold whitespace-nowrap"><span id="pPct">0%</span><span class="text-mut"> · <span id="pStep">Қадам 1 / 8</span></span></div>
       </div>
       <button type="button" id="modePill" class="navpill" title="Толтыру режимін ауыстыру"><span>Толық</span><svg class="ic"><use href="#i-swap"/></svg></button>
@@ -69,8 +69,8 @@
   </div>
 </header>
 
-<main class="max-w-3xl mx-auto px-4 md:px-8 pt-10 pb-16">
-  <div id="formWrap">
+<main class="max-w-3xl mx-auto px-3 sm:px-4 md:px-8 pt-6 md:pt-10 pb-16">
+  <div id="formWrap" class="glass-panel px-5 py-8 sm:px-8 md:px-12 md:py-12">
   <div id="restoreBar" class="restorebar" hidden>
     <span>Жауаптарыңызды черновиктен қайтардым — сол жерден жалғастыра бересіз.</span>
     <button type="button" class="resetbtn" data-reset>Басынан бастау</button>
@@ -93,12 +93,12 @@
         <div class="lb">Қалай толтырамыз?</div>
         <div class="grid sm:grid-cols-2 gap-3">
           <button type="button" class="modecard" data-mode="fast">
-            <svg class="ic-lg text-gold"><use href="#i-bolt"/></svg>
+            <svg class="ic-lg"><use href="#i-bolt"/></svg>
             <div class="font-extrabold mt-1">Жылдам · ~4 минут</div>
             <p class="text-xs text-mut mt-1 leading-relaxed">Тек ең маңыздысы: байланыс, бизнес туралы екі қысқа жауап (немесе дауыстық хабар), қалғаны — дайын нұсқаларды басу.</p>
           </button>
           <button type="button" class="modecard" data-mode="full">
-            <svg class="ic-lg text-gold"><use href="#i-list"/></svg>
+            <svg class="ic-lg"><use href="#i-list"/></svg>
             <div class="font-extrabold mt-1">Толық · ~10 минут</div>
             <p class="text-xs text-mut mt-1 leading-relaxed">Оған қоса клиенттер, өтінімдер және безендіру туралы сұрақтар — мәтіндер дәлірек, кейін нақтылау да аз болады.</p>
           </button>
@@ -648,11 +648,11 @@
   </div>
 
     <div id="done" class="hidden text-center">
-    <div class="rounded-3xl bg-white border border-line p-10 md:p-14 shadow-sm">
-      <div class="w-20 h-20 mx-auto rounded-full bg-green/15 text-green flex items-center justify-center">
+    <div class="glass-panel p-10 md:p-14">
+      <div class="ok-bead w-20 h-20 mx-auto rounded-full flex items-center justify-center">
         <svg class="w-10 h-10 icon-stroke" style="stroke-width:2.5"><use href="#i-check"/></svg>
       </div>
-      <h2 class="font-disp font-semibold text-2xl md:text-3xl mt-6">Рақмет! Бриф алынды.</h2>
+      <h2 class="font-extrabold tracking-tight text-2xl md:text-3xl mt-6">Рақмет! Бриф алынды.</h2>
       <p class="text-mut mt-4 leading-relaxed">Жұмыс күні ішінде бет жоспары мен нақты бағасын жіберемін<span id="doneTo"></span>.</p>
       <p class="text-sm text-mut mt-3">Логотип, фото немесе прайс бар ма? Оларды Telegram-ға жіберіңіз — брифіңізге тіркеймін.</p>
       <div class="mt-7 flex flex-wrap justify-center gap-3">
@@ -664,12 +664,12 @@
   </div>
 </main>
 
-<footer class="border-t border-line py-8">
-  <p class="text-center text-xs text-mutd">Жауаптарыңызды тек мен көремін · altyn·click · <a href="https://t.me/altynclick" target="_blank" rel="noopener" class="text-golddeep font-bold">@altynclick</a></p>
+<footer class="py-8">
+  <p class="text-center text-xs text-mutd">Жауаптарыңызды тек мен көремін · altyn·click · <a href="https://t.me/altynclick" target="_blank" rel="noopener" class="text-golddeep font-bold underline-offset-2 hover:underline">@altynclick</a></p>
 </footer>
 
-<script src="../i18n/kk.js?v=92ffc4fd56" defer></script>
-<script src="../assets/brief.js?v=ea898897e2" defer></script>
+<script src="../i18n/kk.js?v=666d100338" defer></script>
+<script src="../assets/brief.js?v=e9dd1d903a" defer></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </body>
 </html>
