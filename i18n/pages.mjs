@@ -9,6 +9,15 @@ export const index = [
    `content="Бизнесіңіз туралы 4–10 минутта айтып беріңіз: көбіне дайын нұсқаларды басу ғана. Қиынын маған сеніп тапсыруға болады."`,
    `content="Tell me about your business in 4–10 minutes, mostly by tapping ready-made options. Anything tricky you can leave to me."`],
 
+  // social preview
+  [`content="https://brief-aq7.pages.dev/"`, `content="https://brief-aq7.pages.dev/kz/"`, `content="https://brief-aq7.pages.dev/en/"`],
+  [`content="Бриф на сайт — Altyn Click"`, `content="Сайтқа арналған бриф — Altyn Click"`, `content="Website brief — Altyn Click"`],
+  [`content="Расскажите о бизнесе за 4–10 минут, в основном кликами по готовым вариантам. План страницы и точную стоимость пришлю в течение дня."`,
+   `content="Бизнесіңіз туралы 4–10 минутта айтыңыз, көбіне дайын нұсқаларды басу арқылы. Бет жоспары мен нақты бағасын бір күн ішінде жіберемін."`,
+   `content="Tell me about your business in 4–10 minutes, mostly by tapping ready-made options. I’ll send a page plan and an exact price within a day."`],
+  [`content="https://brief-aq7.pages.dev/og.jpg?v=1"`, `content="https://brief-aq7.pages.dev/og-kz.jpg?v=1"`, `content="https://brief-aq7.pages.dev/og-en.jpg?v=1"`],
+  [`content="Бриф Altyn Click: план и цена сайта за день"`, `content="Altyn Click брифі: сайт жоспары мен бағасы бір күнде"`, `content="Altyn Click brief: a site plan and price within a day"`],
+
   // header
   [`<span id="pStep">Шаг 1 из 8</span>`, `<span id="pStep">Қадам 1 / 8</span>`, `<span id="pStep">Step 1 of 8</span>`],
   [`title="Сменить режим заполнения"><span>Подробно</span>`, `title="Толтыру режимін ауыстыру"><span>Толық</span>`, `title="Change how you fill it in"><span>Detailed</span>`],
