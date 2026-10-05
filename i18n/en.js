@@ -1,0 +1,61 @@
+/* English strings for assets/brief.js. Loaded only on /en/ before brief.js. */
+window.I18N = {
+  ui: {
+    stepWord: (c, l) => 'Step ' + c + ' of ' + l,
+    multi: 'pick any', other: 'Other', otherPh: 'Your option', otherAria: 'Your own option', inVoice: 'covered in voice note',
+    resetConfirm: 'Erase all answers? Tap again',
+    fast: 'Quick', full: 'Detailed',
+    modeAria: m => 'Mode: ' + (m === 'fast' ? 'quick' : 'detailed') + '. Switch to ' + (m === 'fast' ? 'detailed' : 'quick'),
+    errContact: 'Please check your contact: I need a phone number (e.g. +7 701 123 45 67) or a Telegram username (@name), otherwise I can’t reply.',
+    errOther: l => 'Type in your option or untick “Other”: ' + l + '.',
+    tipTrust: ' Don’t feel like answering? Tap “I trust you” at the top of the block and I’ll work it out myself.',
+    tipVoice: ' Instead of “What you do” and “Services” you can record a voice note.',
+    errMissing: (l, tip) => 'Still to answer: ' + l + '.' + tip,
+    send: 'Send the brief', next: 'Next', sendingTxt: 'Sending…',
+    allReady: 'All set', canSendNow: 'You can send it now.', canSend: 'You can send it now.',
+    leftOpt: n => 'Optional questions left: ' + n + '. If you’d like to add more:',
+    edit: 'edit', voices: 'Voice notes:', pcs: '', filesLb: 'Files:',
+    trustedSum: 'Left to me', trustedAlso: ' — I’ll also take into account what you ticked:', emptySum: '— empty for now',
+    copyHead: 'Altyn Click brief', copyTrusted: ' (left to me)', locale: 'en-GB',
+    delFile: 'Remove file', kb: 'KB', mb: 'MB',
+    filesSkipped: m => 'Some files weren’t added: photos and PDFs only, up to ' + m + ' files and 25 MB in total. Send the rest on Telegram:',
+    recStart: 'Record a voice note', recStop: 'Stop recording', recOn: 'Recording… tap to stop',
+    upTo5: 'up to 5 minutes', delRec: 'Delete recording',
+    noMicTip: tg => 'Open the brief in Safari or Chrome (“⋯” menu → “Open in browser”), or send a voice message on Telegram ' + tg + '.',
+    stopFirst: 'Stop the current recording first.',
+    maxRec: m => 'Up to ' + m + ' recordings — that’s plenty.',
+    noRec: 'Recording doesn’t work here. ',
+    inAppMic: 'This browser doesn’t allow microphone access. ',
+    allowMic: tg => 'Allow microphone access (the lock icon in the address bar), or send a voice message on Telegram ' + tg + '.',
+    recShort: 'The recording is shorter than 15 seconds, so it can’t replace the answers. Tell me a bit more or fill in the fields.',
+    recDone: 'Done! You can record another one.', recDoneLast: 'Done!',
+    tsLang: 'en',
+    errCaptchaLoad: 'The spam check couldn’t load. Refresh the page and try again — your answers are saved. Or message me directly:',
+    errCaptcha: 'The spam check didn’t go through. Please try again — your answers are saved. Or message me directly:',
+    errLarge: 'The files are too large to send. Remove some on the “Trust” step and send them on Telegram:',
+    errSend: 'Couldn’t send. Check your connection and try again — your answers are saved. If it still fails, message me directly:',
+    doneTo: c => ' to ' + c
+  },
+  steps: { 1: 'Introduction', 2: 'Business and services', 3: 'Clients', 4: 'Doubts', 5: 'Trust', 6: 'Enquiries', 7: 'Website' },
+  labels: {
+    name: 'Name', contact: 'Contact', contactway: 'Preferred way to talk', niche: 'Industry', hassite: 'Current website', socials: 'Instagram / 2GIS', siteurl: 'Current site address', siteissues: 'What’s wrong with the site',
+    bizname: 'Business name', activity: 'What you do', city: 'City', format: 'Where you work', services: 'Services / products', top: 'Most wanted orders', avgcheck: 'Average spend',
+    who: 'Who your clients are', decider: 'Who decides', situation: 'What they come with', why: 'What clients praise', thanks: 'Praise in their words',
+    doubts: 'What worries clients', faq: 'Questions before buying', refuse: 'Why they don’t buy', rivals: 'Compared with',
+    proof: 'Proof', numbers: 'Numbers and terms', has: 'Materials',
+    action: 'Main button', pubsame: 'Contact on the button', pubphone: 'Contact for buttons', addr: 'Address and hours', leadto: 'Where to send enquiries', extras: 'Extra features', booking: 'Booking service', afterlead: 'After an enquiry', responder: 'Who replies', speed: 'Reply speed', sources: 'Where clients come from',
+    lang: 'Languages', kztext: 'Kazakh texts', entext: 'English texts', brand: 'Brand identity', brandparts: 'Brand assets', brandkeep: 'What to do with the style', examples: 'Sites you like', notneed: 'Not wanted on the site', domain: 'Site and domain access', updates: 'Who updates the site', budget: 'Budget', terms: 'Timing'
+  },
+  // Placeholders per niche (keys are the Russian chip values): what you do, services, praise, questions, numbers
+  ph: {
+    '': ['E.g. a nail studio in central Almaty, open since 2019.', 'Service 1 — from 10,000 ₸; service 2 — 25,000 ₸; the rest on request', '“Everything was explained clearly”, “done faster than promised”', '“How much is it?”, “How long does it take?”, “Can I pay in instalments?”', 'E.g. since 2018, 1,500 clients, 1-year guarantee'],
+    'Стоматология / клиника': ['E.g. a family dental clinic in Almaty treating adults and children. Open since 2016.', 'Cavity treatment — from 15,000 ₸; cleaning — 18,000 ₸; implant — from 250,000 ₸', '“For the first time I wasn’t scared at the dentist”, “they explained everything before treatment”', '“Does it hurt?”, “Can I pay in instalments?”, “Can I bring my child?”', 'E.g. since 2016, 3,000 patients, 2-year guarantee'],
+    'Красота': ['E.g. a beauty salon in Bostandyk district — hair, nails, brows. Open since 2019.', 'Haircut — from 6,000 ₸; colouring — from 20,000 ₸; gel manicure — 8,000 ₸', '“Finally found my stylist”, “the polish lasts 3 weeks”', '“How long does it take?”, “What products do you use?”, “Can I book an evening slot?”', 'E.g. since 2019, 12 stylists, 4.9 on 2GIS'],
+    'Ремонт и строительство': ['E.g. turnkey flat renovation in Almaty with our own crew. In business since 2015.', 'Cosmetic renovation — from 25,000 ₸/m²; full renovation — from 60,000 ₸/m²; design project — 5,000 ₸/m²', '“They stayed within the estimate”, “nothing had to be redone after them”', '“How much is turnkey?”, “How long will it take?”, “Who buys the materials?”', 'E.g. 10 years in business, 300 projects, 2-year guarantee'],
+    'Детский центр / обучение': ['E.g. a development centre for children aged 2–7 — speech therapy and school prep.', 'School prep — 40,000 ₸/month; speech therapist — 7,000 ₸/session; trial class — free', '“My child runs to classes”, “started speaking in sentences within six months”', '“From what age?”, “How many children per group?”, “Is there a trial class?”', 'E.g. since 2017, 400 graduates, teachers with 5+ years of experience'],
+    'Кафе / еда': ['E.g. a coffee shop with breakfasts and pastries near Alatau metro, everything made in-house.', 'Breakfasts — from 2,500 ₸; coffee — from 900 ₸; custom cakes — from 12,000 ₸', '“Best syrniki in the area”, “a cosy place to work with a laptop”', '“Do you deliver?”, “Can I order a cake?”, “What time do you open?”', 'E.g. since 2020, 300 guests a day, 4.8 on 2GIS'],
+    'Фитнес / спорт': ['E.g. a women’s fitness studio with group and personal training.', 'Monthly pass — 25,000 ₸; personal session — 8,000 ₸; trial — free', '“Lost 7 kg in 3 months”, “the first gym I actually want to go to”', '“Is it OK for beginners?”, “Can I freeze my pass?”, “Are there showers?”', 'E.g. since 2018, 600 clients, certified trainers'],
+    'Юрист / бухгалтер / консалтинг': ['E.g. bookkeeping for sole traders and LLPs, we file reports on the client’s behalf.', 'Sole trader support — from 15,000 ₸/month; LLP — from 40,000 ₸/month; consultation — 10,000 ₸', '“Took the tax headache off my hands”, “they explain things in plain words”', '“How much for my business?”, “Do you work remotely?”, “What do you need from me?”', 'E.g. since 2014, 120 clients on retainer'],
+    'Авто': ['E.g. a car service on Ryskulov Ave — suspension, diagnostics, maintenance.', 'Diagnostics — 5,000 ₸; oil change — from 4,000 ₸; suspension repair — after inspection', '“Didn’t push anything extra”, “fixed it the same day”', '“How much is diagnostics?”, “Can I wait on site?”, “Can I bring my own parts?”', 'E.g. since 2012, 5 service bays, 6-month guarantee']
+  }
+};

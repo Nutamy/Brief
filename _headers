@@ -13,9 +13,15 @@
   Cache-Control: no-cache
 /index.html
   Cache-Control: no-cache
+/kz/*
+  Cache-Control: no-cache
+/en/*
+  Cache-Control: no-cache
 
 # Assets are referenced with ?v=<content hash> (see build.mjs), so they can be cached for good
 /assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/i18n/*
   Cache-Control: public, max-age=31536000, immutable
 
 # Build sources and docs are not meant to be public
@@ -24,4 +30,6 @@
 /src/*
   X-Robots-Tag: noindex
 /build.mjs
+  X-Robots-Tag: noindex
+/scripts/*
   X-Robots-Tag: noindex

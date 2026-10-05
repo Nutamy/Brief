@@ -158,6 +158,9 @@ export async function onRequestPost({ request, env }) {
   L.push('👤 <b>Имя:</b> ' + esc(d.name));
   L.push('📞 <b>Контакт:</b> ' + esc(d.contact));
   for (const k of HEAD) if (d[k]) L.push('• <b>' + LABELS[k] + ':</b> ' + esc(d[k]));
+  // Brief filled in on /kz/ or /en/: free-text answers are in that language, chips arrive in Russian
+  const LANG_NAMES = { kk:'казахский 🇰🇿', en:'английский 🇬🇧' };
+  if (LANG_NAMES[p.lang]) L.push('🌐 <b>Язык брифа:</b> ' + LANG_NAMES[p.lang]);
   L.push('⚙️ <b>Режим:</b> ' + (p.mode === 'fast' ? 'быстрый ⚡️' : 'подробный 📋'));
   if (files.length) L.push('🎙 <b>Есть голосовые — слушать в первую очередь</b>');
   if (attachments.length) L.push('📎 <b>Файлов от клиента:</b> ' + attachments.length);

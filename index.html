@@ -15,7 +15,7 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="assets/brief.css?v=d869900128">
+<link rel="stylesheet" href="assets/brief.css?v=f9da8c3298">
 </head>
 
 <body class="antialiased">
@@ -50,7 +50,7 @@
 <header class="sticky top-0 z-50 bg-paper/95 backdrop-blur border-b border-line">
   <div class="max-w-3xl mx-auto px-4 md:px-8">
     <div class="flex items-center gap-3 md:gap-4 h-14">
-      <div class="font-disp font-semibold text-base tracking-tight whitespace-nowrap">altyn<span class="text-gold">·click</span></div>
+      <div class="wm font-disp font-semibold text-base tracking-tight whitespace-nowrap">altyn<span class="text-gold">·click</span></div>
       <div class="flex-1 flex items-center gap-3 min-w-0">
         <div class="flex-1 h-2.5 rounded-full bg-cream border border-line overflow-hidden min-w-[50px]"><div id="pBar" class="h-full pfill rounded-full" style="width:0%"></div></div>
         <div class="text-xs font-extrabold whitespace-nowrap"><span id="pPct">0%</span><span class="text-mut"> · <span id="pStep">Шаг 1 из 8</span></span></div>
@@ -80,7 +80,14 @@
 
     <!-- ШАГ 1 -->
     <section class="step active" data-step="1" id="step1">
-      <div class="eyebrow">Шаг 1 · Знакомство</div>
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div class="eyebrow">Шаг 1 · Знакомство</div>
+        <nav class="langsw" aria-label="Язык брифа">
+          <a href="/" hreflang="ru" lang="ru" data-lang="ru" aria-current="page">Рус</a>
+          <a href="/kz/" hreflang="kk" lang="kk" data-lang="kk">Қаз</a>
+          <a href="/en/" hreflang="en" lang="en" data-lang="en">Eng</a>
+        </nav>
+      </div>
       <h1 class="h-step">Привет! Давайте знакомиться <svg class="ic-lg"><use href="#i-hi"/></svg></h1>
       <p class="text-mut mt-3 leading-relaxed">Я Наталья, делаю продающие сайты. По вашим ответам пришлю <b class="text-ink">план страницы и точную стоимость</b> — в течение дня. Разбираться в маркетинге не нужно: почти везде есть готовые варианты, а трудное можно доверить мне.</p>
 
@@ -673,7 +680,7 @@
   <p class="text-center text-xs text-mutd">Ваши ответы видите только я · altyn·click · <a href="https://t.me/altynclick" target="_blank" rel="noopener" class="text-golddeep font-bold">@altynclick</a></p>
 </footer>
 
-<script src="assets/brief.js?v=784be9efe4" defer></script>
+<script src="assets/brief.js?v=ea898897e2" defer></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </body>
 </html>

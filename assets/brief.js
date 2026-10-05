@@ -13,6 +13,10 @@
   const OTHER='__other';
   const TG_URL='https://t.me/altynclick';
 
+  // Interface language comes from <html lang>. /kz/ and /en/ load i18n/<lang>.js first: it sets
+  // window.I18N with the client-facing strings below. Chip values (data-val), LABELS and step titles
+  // stay Russian on every version: they go to Telegram, drive data-if conditions and survive a language switch.
+  const LANG=document.documentElement.lang||'ru';
   const LABELS={
     name:'Имя',contact:'Контакт',contactway:'Как удобнее связаться',niche:'Сфера',hassite:'Сайт сейчас',socials:'Instagram / 2ГИС',siteurl:'Текущий сайт',siteissues:'Не устраивает в сайте',
     bizname:'Название',activity:'Чем занимается',city:'Город',format:'Формат работы',services:'Услуги / товары',top:'Главные услуги',avgcheck:'Чек',
@@ -54,6 +58,49 @@
     'Авто':['Например: автосервис на Рыскулова — ходовая, диагностика, ТО.','Диагностика — 5 000 ₸; замена масла — от 4 000 ₸; ремонт ходовой — по осмотру','«Не навязали лишнего», «сделали в тот же день»','«Сколько стоит диагностика?», «Можно подождать на месте?», «Можно со своими запчастями?»','Например: с 2012 года, 5 боксов, гарантия 6 месяцев']
   };
 
+  const RU={
+    stepWord:(c,l)=>'Шаг '+c+' из '+l,
+    multi:'можно несколько', other:'Другое', otherPh:'Ваш вариант', otherAria:'Свой вариант', inVoice:'есть в голосовом',
+    resetConfirm:'Стереть все ответы? Нажмите ещё раз',
+    fast:'Быстро', full:'Подробно',
+    modeAria:m=>'Режим: '+(m==='fast'?'быстро':'подробно')+'. Переключить на '+(m==='fast'?'подробный':'быстрый'),
+    errContact:'Проверьте контакт: нужен телефон (например, +7 701 123 45 67) или ник в Telegram (@name) — иначе я не смогу ответить.',
+    errOther:l=>'Впишите свой вариант или снимите отметку «Другое»: '+l+'.',
+    tipTrust:' Не хочется отвечать — нажмите «Доверяю вам» вверху блока, и я продумаю сама.',
+    tipVoice:' Вместо «Чем занимаетесь» и «Услуг» можно записать голосовое.',
+    errMissing:(l,tip)=>'Осталось ответить: '+l+'.'+tip,
+    send:'Отправить бриф', next:'Дальше', sendingTxt:'Отправляю…',
+    allReady:'Всё готово', canSendNow:'Можно отправлять.', canSend:'Можно отправить сейчас.',
+    leftOpt:n=>'Остались необязательные вопросы: '+n+'. Если захотите дополнить:',
+    edit:'изменить', voices:'Голосовые:', pcs:'шт.', filesLb:'Файлы:',
+    trustedSum:'Доверено мне', trustedAlso:' — учту и то, что вы отметили:', emptySum:'— пока пусто',
+    copyHead:'Бриф Altyn Click', copyTrusted:' (доверено)', locale:'ru-RU',
+    delFile:'Удалить файл', kb:'КБ', mb:'МБ',
+    filesSkipped:m=>'Часть файлов не добавлена: подходят фото и PDF, до '+m+' файлов и 25 МБ вместе. Остальное пришлите в Telegram:',
+    recStart:'Записать голосовое', recStop:'Остановить запись', recOn:'Записываю… нажмите, чтобы остановить',
+    upTo5:'до 5 минут', delRec:'Удалить запись',
+    noMicTip:tg=>'Откройте бриф в Safari или Chrome (меню «⋯» → «Открыть в браузере») — или пришлите голосовое в Telegram '+tg+'.',
+    stopFirst:'Сначала остановите текущую запись.',
+    maxRec:m=>'Максимум '+m+' записи — этого достаточно.',
+    noRec:'Здесь запись не работает. ',
+    inAppMic:'Этот браузер не даёт доступ к микрофону. ',
+    allowMic:tg=>'Разрешите доступ к микрофону (значок замка в адресной строке) — или пришлите голосовое в Telegram '+tg+'.',
+    recShort:'Запись короче 15 секунд — она не заменит ответы. Расскажите подробнее или заполните поля.',
+    recDone:'Готово! Можно записать ещё.', recDoneLast:'Готово!',
+    tsLang:'ru',
+    errCaptchaLoad:'Не удалось пройти проверку от спама. Обновите страницу и попробуйте ещё раз — ответы сохранятся. Или напишите напрямую:',
+    errCaptcha:'Проверка от спама не прошла. Попробуйте ещё раз — ответы сохранятся. Или напишите напрямую:',
+    errLarge:'Файлы слишком большие для отправки. Удалите часть на шаге «Доверие» и пришлите их в Telegram:',
+    errSend:'Не получилось отправить. Проверьте интернет и попробуйте ещё раз — ответы сохранятся. Если не выходит, напишите напрямую:',
+    doneTo:c=>' — сюда: '+c
+  };
+  const T=window.I18N||{};
+  const I=Object.assign({},RU,T.ui||{});
+  // Client-facing field names and step titles; Russian ones are kept for what goes to Telegram
+  const SHOWN=Object.assign({},LABELS,T.labels||{});
+  const stepTitle=n=>(T.steps&&T.steps[n])||stepOf(n).t;
+  if(T.ph) Object.assign(PH,T.ph);
+
   let cur=1, mode='full', sending=false, returnToSum=false;
   const trusted={}; TRUSTABLE.forEach(n=>trusted[n]=false);
   const chips={}, chipBoxes={}, otherInputs={};
@@ -69,7 +116,7 @@
   }
   function hideWarn(){ $('#warnbar').classList.remove('show'); }
   function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-  function fmtSize(b){ return b<1048576?Math.max(1,Math.round(b/1024))+' КБ':(b/1048576).toFixed(1).replace('.',',')+' МБ'; }
+  function fmtSize(b){ return b<1048576?Math.max(1,Math.round(b/1024))+' '+I.kb:(b/1048576).toFixed(1).replace('.',',')+' '+I.mb; }
 
   /* ---------- visibility ---------- */
   function fieldNode(n){ return chipBoxes[n]||$('#briefForm [name="'+n+'"]'); }
@@ -151,17 +198,17 @@
     if(lb){
       if(!lb.id) lb.id='lb-'+(++lbId);
       c.setAttribute('aria-labelledby',lb.id);
-      if(c.dataset.multi!=null&&!lb.querySelector('.lbmulti')) lb.insertAdjacentHTML('beforeend',' <span class="lbhint lbmulti">можно несколько</span>');
+      if(c.dataset.multi!=null&&!lb.querySelector('.lbmulti')) lb.insertAdjacentHTML('beforeend',' <span class="lbhint lbmulti">'+I.multi+'</span>');
     }
     if(c.dataset.other!=null){
       const b=document.createElement('button');
       b.type='button'; b.className='chip other'; b.dataset.val=OTHER;
-      b.innerHTML=icon('plus')+'<span>Другое</span>';
+      b.innerHTML=icon('plus')+'<span>'+I.other+'</span>';
       c.appendChild(b);
       const i=document.createElement('input');
       i.className='inp otherinp'; i.name=g+'_other'; i.maxLength=200; i.hidden=true;
-      i.placeholder=c.dataset.other||'Ваш вариант';
-      i.setAttribute('aria-label','Свой вариант');
+      i.placeholder=c.dataset.other||I.otherPh;
+      i.setAttribute('aria-label',I.otherAria);
       c.after(i); otherInputs[g]=i;
     }
     c.addEventListener('click',e=>{
@@ -189,7 +236,7 @@
     const el=fieldNode(n); if(!el) return;
     const star=el.parentElement.querySelector('.req'); if(!star) return;
     const tag=document.createElement('span'); tag.className='vcov'; tag.hidden=true;
-    tag.innerHTML=icon('mic')+'есть в голосовом';
+    tag.innerHTML=icon('mic')+I.inVoice;
     star.after(tag); reqMarks[n]={star,tag};
   });
   function syncReqMarks(){
@@ -272,7 +319,7 @@
     const b=e.target.closest('[data-reset]'); if(!b) return;
     if(!b.dataset.armed){
       b.dataset.armed='1'; b.dataset.label=b.innerHTML;
-      b.textContent='Стереть все ответы? Нажмите ещё раз';
+      b.textContent=I.resetConfirm;
       setTimeout(()=>{ if(b.dataset.armed){ delete b.dataset.armed; b.innerHTML=b.dataset.label; } },4000);
       return;
     }
@@ -286,8 +333,8 @@
     mode=m;
     document.body.classList.toggle('fast',m==='fast');
     const pill=$('#modePill');
-    pill.querySelector('span').textContent=m==='fast'?'Быстро':'Подробно';
-    pill.setAttribute('aria-label','Режим: '+(m==='fast'?'быстро':'подробно')+'. Переключить на '+(m==='fast'?'подробный':'быстрый'));
+    pill.querySelector('span').textContent=m==='fast'?I.fast:I.full;
+    pill.setAttribute('aria-label',I.modeAria(m));
     $$('.modecard').forEach(c=>{ const on=c.dataset.mode===m; c.classList.toggle('on',on); c.setAttribute('aria-pressed',on?'true':'false'); });
     applyConds(); saveDraft(); refresh();
   }
@@ -325,18 +372,18 @@
   function showIssue(is){
     clearErr();
     if(is.contact){
-      showWarn('Проверьте контакт: нужен телефон (например, +7 701 123 45 67) или ник в Telegram (@name) — иначе я не смогу ответить.');
+      showWarn(I.errContact);
       markErr(['contact']); return;
     }
     if(is.other){
-      showWarn('Впишите свой вариант или снимите отметку «Другое»: '+labelsOf(is.other)+'.');
+      showWarn(I.errOther(labelsOf(is.other)));
       is.other.forEach(g=>otherInputs[g].classList.add('err')); otherInputs[is.other[0]].focus(); return;
     }
     const hasVoice=coveringVoices().some(v=>v.topic==='business');
     const tip=TRUSTABLE.includes(is.n)
-      ?' Не хочется отвечать — нажмите «Доверяю вам» вверху блока, и я продумаю сама.'
-      :(is.n===2&&!hasVoice&&is.miss.some(x=>VOICE_COVERS.business.includes(x))?' Вместо «Чем занимаетесь» и «Услуг» можно записать голосовое.':'');
-    showWarn('Осталось ответить: '+labelsOf(is.miss)+'.'+tip);
+      ?I.tipTrust
+      :(is.n===2&&!hasVoice&&is.miss.some(x=>VOICE_COVERS.business.includes(x))?I.tipVoice:'');
+    showWarn(I.errMissing(labelsOf(is.miss),tip));
     markErr(is.miss);
   }
 
@@ -352,7 +399,7 @@
     const pct=Math.round(sum/LAST*100), narrow=innerWidth<640;
     $('#pBar').style.width=pct+'%';
     $('#pPct').textContent=pct+'%';
-    $('#pStep').textContent=narrow?cur+'/'+LAST:'Шаг '+cur+' из '+LAST;
+    $('#pStep').textContent=narrow?cur+'/'+LAST:I.stepWord(cur,LAST);
     $$('.dot').forEach(d=>{
       const n=+d.dataset.goto, ok=stepProgress(n)>=1;
       d.classList.toggle('cur',n===cur);
@@ -375,8 +422,8 @@
     const first=fieldNode(list[0]); if(first&&first.scrollIntoView) first.scrollIntoView({behavior:'smooth',block:'center'});
   }
   // Lower-case the first letter only when it is not an abbreviation or brand ("Instagram / 2ГИС" stays)
-  function lc(s){ return /^[А-ЯЁ][а-яё]/.test(s)?s[0].toLowerCase()+s.slice(1):s; }
-  function labelsOf(list){ const t=list.map(m=>lc(LABELS[m])).join(', '); return t[0].toUpperCase()+t.slice(1); }
+  function lc(s){ return /^[A-ZА-ЯЁӘҒҚҢӨҰҮҺІ][a-zа-яёәғқңөұүһі]/.test(s)&&!/^(Instagram|Telegram|WhatsApp)/.test(s)?s[0].toLowerCase()+s.slice(1):s; }
+  function labelsOf(list){ const t=list.map(m=>lc(SHOWN[m])).join(', '); return t[0].toUpperCase()+t.slice(1); }
   function go(n,opts){
     // Leaving a step ends an active recording so it is kept and never runs unseen in the background
     if(recTopic) stopRec();
@@ -384,7 +431,7 @@
     cur=n;
     $$('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===n));
     $('#btnBack').style.visibility=n===1?'hidden':'visible';
-    $('#btnNextText').textContent=n===LAST?'Отправить бриф':'Дальше';
+    $('#btnNextText').textContent=n===LAST?I.send:I.next;
     $('#btnNextIc').innerHTML='<use href="#i-'+(n===LAST?'send':'right')+'"/>';
     $('#btnToSum').hidden=!(returnToSum&&n!==LAST);
     hideWarn(); clearErr();
@@ -438,32 +485,43 @@
     const total=left.reduce((a,s)=>a+s.fields.length,0);
     box.classList.toggle('ok',!total);
     if(!total){
-      box.innerHTML='<div class="stt">'+icon('check')+' Всё готово</div><p class="std">Можно отправлять.</p>';
+      box.innerHTML='<div class="stt">'+icon('check')+' '+I.allReady+'</div><p class="std">'+I.canSendNow+'</p>';
       return;
     }
-    const links=left.map(s=>'<button type="button" class="stlink" data-goto="'+s.n+'">'+escHtml(s.t)+' · '+s.fields.length+'</button>').join('');
-    box.innerHTML='<div class="stt">Можно отправить сейчас.</div>'
-      +'<p class="std">Остались необязательные вопросы: '+total+'. Если захотите дополнить:</p>'
+    const links=left.map(s=>'<button type="button" class="stlink" data-goto="'+s.n+'">'+escHtml(stepTitle(s.n))+' · '+s.fields.length+'</button>').join('');
+    box.innerHTML='<div class="stt">'+I.canSend+'</div>'
+      +'<p class="std">'+I.leftOpt(total)+'</p>'
       +'<div class="stlinks">'+links+'</div>';
+  }
+  // What the client sees in the summary and the copy: chips by their visible text, in the page language
+  function shownVal(n){
+    if(!chipBoxes[n]||!window.I18N) return collectVal(n);
+    if(hidden(n)) return '';
+    const c=chipBoxes[n], vals=chips[n].filter(v=>v!==OTHER).map(v=>{
+      const b=[...c.querySelectorAll('.chip')].find(x=>x.dataset.val===v);
+      return b?b.textContent.trim():v;
+    });
+    if(chips[n].includes(OTHER)&&otherInputs[n]){ const o=otherInputs[n].value.trim(); if(o) vals.push(o); }
+    return vals.join(', ');
   }
   function stepRows(st){
     const rows=[];
-    st.fields.forEach(f=>{ const v=collectVal(f); if(v) rows.push([LABELS[f],v]); });
+    st.fields.forEach(f=>{ const v=shownVal(f); if(v) rows.push([SHOWN[f],v]); });
     return rows;
   }
   function renderSummary(){
     const box=$('#summary'); box.innerHTML='';
     STEPS.forEach(st=>{
       const div=document.createElement('div'); div.className='sumstep';
-      let inner='<div class="sumt"><span>'+st.t+'</span><button type="button" class="sedit" data-goto="'+st.n+'">изменить</button></div>';
+      let inner='<div class="sumt"><span>'+escHtml(stepTitle(st.n))+'</span><button type="button" class="sedit" data-goto="'+st.n+'">'+I.edit+'</button></div>';
       const vc=st.voice?voices.filter(v=>v.topic===st.voice).length:0;
-      let extra=vc?'<div class="sumrow"><span>Голосовые:</span> '+vc+' шт.</div>':'';
-      if(st.files&&files.length) extra+='<div class="sumrow"><span>Файлы:</span> '+files.map(f=>escHtml(f.name)).join(', ')+'</div>';
+      let extra=vc?'<div class="sumrow"><span>'+I.voices+'</span> '+vc+(I.pcs?' '+I.pcs:'')+'</div>':'';
+      if(st.files&&files.length) extra+='<div class="sumrow"><span>'+I.filesLb+'</span> '+files.map(f=>escHtml(f.name)).join(', ')+'</div>';
       const rows=stepRows(st).map(r=>'<div class="sumrow"><span>'+r[0]+':</span> '+escHtml(r[1])+'</div>').join('');
       if(trusted[st.n]){
-        inner+='<div class="sumtrust">'+icon('spark')+' Доверено мне'+(rows?' — учту и то, что вы отметили:':'')+'</div>'+rows+extra;
+        inner+='<div class="sumtrust">'+icon('spark')+' '+I.trustedSum+(rows?I.trustedAlso:'')+'</div>'+rows+extra;
       }else{
-        inner+=(rows||extra)?rows+extra:'<div class="sumrow empty">— пока пусто</div>';
+        inner+=(rows||extra)?rows+extra:'<div class="sumrow empty">'+I.emptySum+'</div>';
       }
       div.innerHTML=inner; box.appendChild(div);
     });
@@ -471,14 +529,14 @@
 
   // Plain-text copy of the answers the client can keep for themselves
   function answersText(){
-    const L=['Бриф Altyn Click · '+new Date().toLocaleString('ru-RU'),''];
+    const L=[I.copyHead+' · '+new Date().toLocaleString(I.locale),''];
     STEPS.forEach(st=>{
-      L.push('— '+st.t+(trusted[st.n]?' (доверено)':'')+' —');
+      L.push('— '+stepTitle(st.n)+(trusted[st.n]?I.copyTrusted:'')+' —');
       const rows=stepRows(st);
       rows.forEach(r=>L.push(r[0]+': '+r[1]));
       const vc=st.voice?voices.filter(v=>v.topic===st.voice).length:0;
-      if(vc) L.push('Голосовые: '+vc+' шт.');
-      if(st.files&&files.length) L.push('Файлы: '+files.map(f=>f.name).join(', '));
+      if(vc) L.push(I.voices+' '+vc+(I.pcs?' '+I.pcs:''));
+      if(st.files&&files.length) L.push(I.filesLb+' '+files.map(f=>f.name).join(', '));
       if(!rows.length&&!vc) L.push('—');
       L.push('');
     });
@@ -502,7 +560,7 @@
     box.innerHTML='';
     files.forEach(f=>{
       const d=document.createElement('div'); d.className='vitem';
-      d.innerHTML='<svg class="ic text-gold"><use href="#i-clip"/></svg><span class="fname"></span><span class="vdur">'+fmtSize(f.blob.size)+'</span><button type="button" class="vdel" data-fid="'+f.id+'" aria-label="Удалить файл">'+icon('x')+'</button>';
+      d.innerHTML='<svg class="ic text-gold"><use href="#i-clip"/></svg><span class="fname"></span><span class="vdur">'+fmtSize(f.blob.size)+'</span><button type="button" class="vdel" data-fid="'+f.id+'" aria-label="'+I.delFile+'">'+icon('x')+'</button>';
       d.querySelector('.fname').textContent=f.name;
       box.appendChild(d);
     });
@@ -517,7 +575,7 @@
       });
       fileInp.value='';
       renderFiles(); refresh();
-      if(skipped) showWarn('Часть файлов не добавлена: подходят фото и PDF, до '+MAXF+' файлов и 25 МБ вместе. Остальное пришлите в Telegram:',true);
+      if(skipped) showWarn(I.filesSkipped(MAXF),true);
       else hideWarn();
     });
     $('#fileList').addEventListener('click',e=>{
@@ -548,8 +606,8 @@
   function setRecUI(topic,on){
     const r=recs[topic];
     r.btn.classList.toggle('rec',on);
-    r.btn.setAttribute('aria-label',on?'Остановить запись':'Записать голосовое');
-    r.title.textContent=on?'Записываю… нажмите, чтобы остановить':r.idleTitle;
+    r.btn.setAttribute('aria-label',on?I.recStop:I.recStart);
+    r.title.textContent=on?I.recOn:r.idleTitle;
     if(!on) r.timer.textContent=r.idleTimer;
   }
   function renderVoices(){
@@ -557,7 +615,7 @@
       const box=recs[t].list; box.innerHTML='';
       voices.filter(v=>v.topic===t).forEach(v=>{
         const d=document.createElement('div'); d.className='vitem';
-        d.innerHTML='<audio controls src="'+v.url+'"></audio><span class="vdur">'+fmt(v.dur)+'</span><button type="button" class="vdel" data-id="'+v.id+'" aria-label="Удалить запись">'+icon('x')+'</button>';
+        d.innerHTML='<audio controls src="'+v.url+'"></audio><span class="vdur">'+fmt(v.dur)+'</span><button type="button" class="vdel" data-id="'+v.id+'" aria-label="'+I.delRec+'">'+icon('x')+'</button>';
         box.appendChild(d);
       });
     });
@@ -574,19 +632,18 @@
   // In-app browsers (Instagram, Facebook, TikTok…) usually block the microphone
   const IN_APP=/Instagram|FBAN|FBAV|FB_IAB|Line\/|TikTok|musical_ly|Bytedance/i.test(navigator.userAgent);
   const TG_LINK='<a href="'+TG_URL+'" target="_blank" rel="noopener">@altynclick</a>';
-  const NO_MIC_TIP='Откройте бриф в Safari или Chrome (меню «⋯» → «Открыть в браузере») — или пришлите голосовое в Telegram '+TG_LINK+'.';
+  const NO_MIC_TIP=I.noMicTip(TG_LINK);
   async function toggleRec(topic){
     if(recTopic){
       if(recTopic===topic) stopRec();
-      else vHint(topic,'Сначала остановите текущую запись.');
+      else vHint(topic,I.stopFirst);
       return;
     }
-    if(voices.length>=MAXV){ vHint(topic,'Максимум '+MAXV+' записи — этого достаточно.'); return; }
-    if(!window.isSecureContext||!window.MediaRecorder||!navigator.mediaDevices){ vHint(topic,'Здесь запись не работает. '+NO_MIC_TIP,true); return; }
+    if(voices.length>=MAXV){ vHint(topic,I.maxRec(MAXV)); return; }
+    if(!window.isSecureContext||!window.MediaRecorder||!navigator.mediaDevices){ vHint(topic,I.noRec+NO_MIC_TIP,true); return; }
     try{ mstream=await navigator.mediaDevices.getUserMedia({audio:true}); }
     catch(e){
-      vHint(topic,IN_APP?'Этот браузер не даёт доступ к микрофону. '+NO_MIC_TIP
-        :'Разрешите доступ к микрофону (значок замка в адресной строке) — или пришлите голосовое в Telegram '+TG_LINK+'.',true);
+      vHint(topic,IN_APP?I.inAppMic+NO_MIC_TIP:I.allowMic(TG_LINK),true);
       return;
     }
     let mime=''; ['audio/webm;codecs=opus','audio/webm','audio/mp4'].forEach(m=>{ if(!mime&&MediaRecorder.isTypeSupported(m))mime=m; });
@@ -602,12 +659,11 @@
       voices.push(v); storeVoice(v);
       recTopic=null; setRecUI(topic,false); renderVoices(); clearErr(); hideWarn(); applyConds(); refresh();
       const short=VOICE_COVERS[topic]&&dur<VOICE_MIN;
-      vHint(topic,short?'Запись короче 15 секунд — она не заменит ответы. Расскажите подробнее или заполните поля.'
-        :(voices.length<MAXV?'Готово! Можно записать ещё.':'Готово!'));
+      vHint(topic,short?I.recShort:(voices.length<MAXV?I.recDone:I.recDoneLast));
       recDone.splice(0).forEach(f=>f());
     };
     mrec.start(); t0=Date.now(); setRecUI(topic,true); vHint(topic,'');
-    mtick=setInterval(()=>{ const ms=Date.now()-t0; recs[topic].timer.textContent=fmt(ms)+' · до 5 минут'; if(ms>=MAXMS&&mrec.state!=='inactive')mrec.stop(); },250);
+    mtick=setInterval(()=>{ const ms=Date.now()-t0; recs[topic].timer.textContent=fmt(ms)+' · '+I.upTo5; if(ms>=MAXMS&&mrec.state!=='inactive')mrec.stop(); },250);
   }
 
   /* ---------- Turnstile (bot check) ---------- */
@@ -617,7 +673,7 @@
   function tsRender(){
     if(tsId!==null||!tsReady()) return;
     tsId=window.turnstile.render('#tsBox',{
-      sitekey:TS_SITEKEY, appearance:'interaction-only', execution:'execute', language:'ru',
+      sitekey:TS_SITEKEY, appearance:'interaction-only', execution:'execute', language:I.tsLang,
       callback:t=>{ tsToken=t; tsDeliver(t); },
       'expired-callback':()=>{ tsToken=''; },
       'error-callback':()=>{ tsToken=''; tsDeliver(''); return true; }
@@ -652,16 +708,16 @@
     }
     sending=true;
     const btn=$('#btnNext'), txt=$('#btnNextText');
-    txt.textContent='Отправляю…'; btn.style.opacity=.7; btn.disabled=true;
-    const fail=msg=>{ showWarn(msg,true); txt.textContent='Отправить бриф'; btn.style.opacity=1; btn.disabled=false; sending=false; };
+    txt.textContent=I.sendingTxt; btn.style.opacity=.7; btn.disabled=true;
+    const fail=msg=>{ showWarn(msg,true); txt.textContent=I.send; btn.style.opacity=1; btn.disabled=false; sending=false; };
     try{
       const token=await getToken();
-      if(!token) return fail('Не удалось пройти проверку от спама. Обновите страницу и попробуйте ещё раз — ответы сохранятся. Или напишите напрямую:');
+      if(!token) return fail(I.errCaptchaLoad);
       const data={};
       Object.keys(LABELS).forEach(k=>{ const v=collectVal(k); if(v)data[k]=v; });
       const skipped=optionalLeft().map(s=>s.t+': '+s.fields.map(f=>lc(LABELS[f])).join(', '));
       const fd=new FormData();
-      fd.append('payload',JSON.stringify({mode,trusted,skipped,voiceTopics:voices.map(v=>v.topic),hp:($('#hp')?$('#hp').value:''),data}));
+      fd.append('payload',JSON.stringify({lang:LANG,mode,trusted,skipped,voiceTopics:voices.map(v=>v.topic),hp:($('#hp')?$('#hp').value:''),data}));
       fd.append('cf-turnstile-response',token);
       voices.forEach((v,i)=>fd.append('voice',v.blob,'voice_'+(i+1)+(/mp4|aac/.test(v.blob.type)?'.m4a':'.webm')));
       files.forEach(f=>fd.append('file',f.blob,f.name));
@@ -671,18 +727,14 @@
       if(!(r.ok&&j.ok)) throw new Error(j.error||'bad');
       savedCopy=answersText();
       const contact=$('#f-contact').value.trim();
-      $('#doneTo').textContent=contact?' — сюда: '+contact:'';
+      $('#doneTo').textContent=contact?I.doneTo(contact):'';
       clearDraft();
       $('#formWrap').classList.add('hidden');
       $('#done').classList.remove('hidden');
       window.scrollTo({top:0,behavior:'smooth'});
     }catch(e){
       tsReset();
-      fail(e.message==='captcha'
-        ?'Проверка от спама не прошла. Попробуйте ещё раз — ответы сохранятся. Или напишите напрямую:'
-        :e.message==='too_large'
-          ?'Файлы слишком большие для отправки. Удалите часть на шаге «Доверие» и пришлите их в Telegram:'
-          :'Не получилось отправить. Проверьте интернет и попробуйте ещё раз — ответы сохранятся. Если не выходит, напишите напрямую:');
+      fail(e.message==='captcha'?I.errCaptcha:e.message==='too_large'?I.errLarge:I.errSend);
     }
   }
 

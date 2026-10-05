@@ -161,5 +161,17 @@
   .fname{flex:1;min-width:0;font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .h-step:focus{outline:none}
 
+  /* language switcher: the current language is marked with aria-current by the i18n build */
+  .langsw{display:inline-flex;gap:2px;padding:3px;border-radius:9999px;border:1.5px solid #E6DEC9;background:#fff;font:800 12px 'Manrope',sans-serif;line-height:1}
+  .langsw a{padding:.45rem .7rem;border-radius:9999px;color:#6F6553;transition:.15s}
+  .langsw a:hover{color:#181410}
+  .langsw a[aria-current="page"]{background:#181410;color:#FAF6EE}
+  .langsw a:focus-visible{outline:3px solid rgba(200,154,60,.55);outline-offset:2px}
+  @media (pointer:coarse){.langsw a{padding:.8rem .95rem}}
+
+  /* Unbounded and Manrope have no Kazakh letters (Ә Ғ Қ Ң Ө Ұ Ү Һ): Onest covers them; the Latin wordmark keeps Unbounded */
+  :lang(kk),:lang(kk) *{font-family:'Onest',sans-serif!important}
+  :lang(kk) .wm,:lang(kk) .wm *{font-family:'Unbounded',sans-serif!important}
+
 @tailwind components;
 @tailwind utilities;

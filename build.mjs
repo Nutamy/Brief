@@ -1,6 +1,7 @@
 // Build: node build.mjs
 // 1) compiles Tailwind into assets/brief.css
 // 2) stamps content hashes into index.html (?v=…) so browsers always fetch fresh assets
+// 3) builds the Kazakh and English copies /kz/ and /en/ from it (scripts/build-i18n.mjs)
 import { execSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -17,3 +18,5 @@ for (const f of ['assets/brief.css', 'assets/brief.js']) {
 }
 writeFileSync('index.html', html);
 console.log('index.html stamped');
+
+await import('./scripts/build-i18n.mjs');
